@@ -1,3 +1,5 @@
+#Ignore default config
+
 logs
 target
 /.idea
