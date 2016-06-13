@@ -11,7 +11,7 @@ import java.util.List;
  */
 
 @Entity
-public class ProductLines extends Model {
+public class ProductLine extends Model {
 
     @Id
     @Basic(optional = false)
@@ -24,9 +24,9 @@ public class ProductLines extends Model {
     @JoinColumn(name = "INSTANCE_ID", referencedColumnName = "ID")
     @ManyToOne
     private Instance instanceId;
-    @OneToMany(mappedBy = "productId")
+    @OneToMany(mappedBy = "productLineId")
     private List<Produit> produitCollection;
 
-    public static Finder<String, ProductLines> find = new Finder<String,ProductLines>(ProductLines.class);
+    public static Finder<String, ProductLine> find = new Finder<String,ProductLine>(ProductLine.class);
 
 }

@@ -1,5 +1,6 @@
 package controllers;
 
+import models.Instance;
 import play.mvc.*;
 
 import views.html.*;
@@ -7,6 +8,7 @@ import views.html.*;
 import java.nio.charset.Charset;
 import java.io.*;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * This controller contains an action to handle HTTP requests
@@ -21,6 +23,9 @@ public class HomeController extends Controller {
      * <code>GET</code> request with a path of <code>/</code>.
      */
     public Result index() {
+        String id = "A";
+        Instance inst = Instance.find.byId("A");
+        System.out.println(inst);
         return ok(index.render("ProdStock Project"));
     }
 

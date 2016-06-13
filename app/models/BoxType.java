@@ -30,8 +30,6 @@ public class BoxType extends Model{
     @JoinColumn(name = "INSTANCE_ID", referencedColumnName = "ID")
     @ManyToOne
     private Instance instanceId;
-    @OneToMany(mappedBy = "productId")
-    private List<Produit> produitCollection;
 
     public static Finder<String, BoxType> find = new Finder<String,BoxType>(BoxType.class);
 

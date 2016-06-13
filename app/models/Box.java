@@ -29,7 +29,7 @@ public class Box extends Model{
     @JoinColumn(name = "INSTANCE_ID", referencedColumnName = "ID")
     @ManyToOne
     private Instance instanceId;
-    @OneToMany(mappedBy = "productId")
+    @OneToMany(mappedBy = "boxId")
     private List<Produit> produitCollection;
 
     public static Finder<String, Box> find = new Finder<String,Box>(Box.class);

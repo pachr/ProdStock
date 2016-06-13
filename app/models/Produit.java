@@ -20,18 +20,18 @@ public class Produit extends Model {
     private String id;
     @JoinColumn(name = "PRODUCT_TYPE_ID", referencedColumnName = "ID")
     @ManyToOne
-    private String productTypeId;
-    @Column(name = "START_PROUCTION")
+    private ProductType productTypeId;
+    @Column(name = "START_PRODUCTION")
     private String startProduction;
     @JoinColumn(name = "COMMAND_ID", referencedColumnName = "ID")
     @ManyToOne
-    private String commandId;
+    private Commande commandId;
     @JoinColumn(name = "PRODUCT_LINE_ID", referencedColumnName = "ID")
     @ManyToOne
-    private String productLineId;
+    private ProductLine productLineId;
     @JoinColumn(name = "BOX_ID", referencedColumnName = "ID")
     @ManyToOne
-    private String boxId;
+    private Box boxId;
     @JoinColumn(name = "INSTANCE_ID", referencedColumnName = "ID")
     @ManyToOne
     private Instance instanceId;

@@ -26,7 +26,7 @@ public class Instance extends Model {
     @OneToMany(mappedBy = "instanceId")
     private List<Commande> commandeCollection;
     @OneToMany(mappedBy = "instanceId")
-    private List<ProductLines> productLinesCollection;
+    private List<ProductLine> productLineCollection;
     @OneToMany(mappedBy = "instanceId")
     private List<Box> boxCollection;
     @OneToMany(mappedBy = "instanceId")

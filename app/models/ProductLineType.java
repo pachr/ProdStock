@@ -24,8 +24,6 @@ public class ProductLineType extends Model {
     @JoinColumn(name = "INSTANCE_ID", referencedColumnName = "ID")
     @ManyToOne
     private Instance instanceId;
-    @OneToMany(mappedBy = "productId")
-    private List<Produit> produitCollection;
 
     public static Finder<String, ProductLineType> find = new Finder<String,ProductLineType>(ProductLineType.class);
 

@@ -30,7 +30,7 @@ public class Commande extends Model {
     @JoinColumn(name = "INSTANCE_ID", referencedColumnName = "ID")
     @ManyToOne
     private Instance instanceId;
-    @OneToMany(mappedBy = "productId")
+    @OneToMany(mappedBy = "commandId")
     private List<Produit> produitCollection;
 
     public static Finder<String, Commande> find = new Finder<String, Commande>(Commande.class);

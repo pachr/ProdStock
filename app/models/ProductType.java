@@ -32,7 +32,7 @@ public class ProductType extends Model{
     @JoinColumn(name = "INSTANCE_ID", referencedColumnName = "ID")
     @ManyToOne
     private Instance instanceId;
-    @OneToMany(mappedBy = "productId")
+    @OneToMany(mappedBy = "productTypeId")
     private List<Produit> produitCollection;
 
     public static Finder<String, ProductType> find = new Finder<String, ProductType>(ProductType.class);
