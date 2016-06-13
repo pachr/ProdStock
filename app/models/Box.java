@@ -30,7 +30,7 @@ public class Box extends Model{
     @ManyToOne
     private Instance instanceId;
     @OneToMany(mappedBy = "boxId")
-    private List<Produit> produitCollection;
+    private List<Product> produitCollection;
 
     public static Finder<String, Box> find = new Finder<String,Box>(Box.class);
 

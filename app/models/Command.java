@@ -11,7 +11,7 @@ import java.util.List;
  */
 
 @Entity
-public class Commande extends Model {
+public class Command extends Model {
 
     @Id
     @Basic(optional = false)
@@ -31,8 +31,8 @@ public class Commande extends Model {
     @ManyToOne
     private Instance instanceId;
     @OneToMany(mappedBy = "commandId")
-    private List<Produit> produitCollection;
+    private List<Product> produitCollection;
 
-    public static Finder<String, Commande> find = new Finder<String, Commande>(Commande.class);
+    public static Finder<String, Command> find = new Finder<String, Command>(Command.class);
 
 }

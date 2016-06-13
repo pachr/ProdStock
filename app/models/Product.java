@@ -10,7 +10,7 @@ import javax.validation.constraints.*;
  */
 
 @Entity
-public class Produit extends Model {
+public class Product extends Model {
 
     @Id
     @Basic(optional = false)
@@ -25,7 +25,7 @@ public class Produit extends Model {
     private String startProduction;
     @JoinColumn(name = "COMMAND_ID", referencedColumnName = "ID")
     @ManyToOne
-    private Commande commandId;
+    private Command commandId;
     @JoinColumn(name = "PRODUCT_LINE_ID", referencedColumnName = "ID")
     @ManyToOne
     private ProductLine productLineId;
@@ -36,6 +36,6 @@ public class Produit extends Model {
     @ManyToOne
     private Instance instanceId;
 
-    public static Finder<String, Produit> find = new Finder<String, Produit>(Produit.class);
+    public static Finder<String, Product> find = new Finder<String, Product>(Product.class);
 
 }

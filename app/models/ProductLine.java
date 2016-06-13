@@ -25,7 +25,7 @@ public class ProductLine extends Model {
     @ManyToOne
     private Instance instanceId;
     @OneToMany(mappedBy = "productLineId")
-    private List<Produit> produitCollection;
+    private List<Product> produitCollection;
 
     public static Finder<String, ProductLine> find = new Finder<String,ProductLine>(ProductLine.class);
 

@@ -22,9 +22,9 @@ public class Instance extends Model {
     @Column(name = "ID")
     private String id;
     @OneToMany(mappedBy = "instanceId")
-    private List<Produit> produitCollection;
+    private List<Product> produitCollection;
     @OneToMany(mappedBy = "instanceId")
-    private List<Commande> commandeCollection;
+    private List<Command> commandeCollection;
     @OneToMany(mappedBy = "instanceId")
     private List<ProductLine> productLineCollection;
     @OneToMany(mappedBy = "instanceId")
