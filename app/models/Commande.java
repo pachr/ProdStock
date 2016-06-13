@@ -4,6 +4,7 @@ import com.avaje.ebean.Model;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
+import java.util.List;
 
 /**
  * Created by Paul-Alexandre on 11/06/2016.
@@ -23,12 +24,14 @@ public class Commande extends Model {
     @Column(name = "SENDING_TDATE")
     private Integer sendingTdate;
     @Column(name = "FEE")
-    private Double fee;
+    private Float fee;
     @Column(name = "PRODUCT_ID_QUANTITY")
     private Integer productIdQuantity;
     @JoinColumn(name = "INSTANCE_ID", referencedColumnName = "ID")
     @ManyToOne
     private Instance instanceId;
+    @OneToMany(mappedBy = "productId")
+    private List<Produit> produitCollection;
 
     public static Finder<String, Commande> find = new Finder<String, Commande>(Commande.class);
 

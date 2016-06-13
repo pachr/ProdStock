@@ -1,17 +1,19 @@
 package models;
 
+
 import com.avaje.ebean.Model;
 
 import javax.persistence.*;
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.List;
 
 /**
- * Created by Paul-Alexandre on 11/06/2016.
+ * Created by Paul-Alexandre on 13/06/2016.
  */
 
 @Entity
-public class ProductLines extends Model {
+public class BoxType extends Model{
 
     @Id
     @Basic(optional = false)
@@ -19,14 +21,18 @@ public class ProductLines extends Model {
     @Size(min = 1, max = 55)
     @Column(name = "ID")
     private String id;
-    @Column(name = "PRODUCT_LINE_NUMBER")
-    private Integer productLineNumber;
+    @Column(name = "HEIGHT")
+    private Integer height;
+    @Column(name = "WIDTH")
+    private Integer width;
+    @Column(name = "PRICE")
+    private Float price;
     @JoinColumn(name = "INSTANCE_ID", referencedColumnName = "ID")
     @ManyToOne
     private Instance instanceId;
     @OneToMany(mappedBy = "productId")
     private List<Produit> produitCollection;
 
-    public static Finder<String, ProductLines> find = new Finder<String,ProductLines>(ProductLines.class);
+    public static Finder<String, BoxType> find = new Finder<String,BoxType>(BoxType.class);
 
 }

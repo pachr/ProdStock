@@ -31,6 +31,12 @@ public class Instance extends Model {
     private List<Box> boxCollection;
     @OneToMany(mappedBy = "instanceId")
     private List<Solution> solutionCollection;
+    @OneToMany(mappedBy = "instanceId")
+    private List<BoxType> boxTypeCollection;
+    @OneToMany(mappedBy = "instanceId")
+    private List<ProductLineType> productLineTypeCollection;
+    @OneToMany(mappedBy = "instanceId")
+    private List<ProductType> productTypeCollection;
 
     public static Finder<String, Instance> find = new Finder<String,Instance>(Instance.class);
 

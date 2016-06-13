@@ -7,11 +7,11 @@ import javax.validation.constraints.*;
 import java.util.List;
 
 /**
- * Created by Paul-Alexandre on 11/06/2016.
+ * Created by Paul-Alexandre on 13/06/2016.
  */
 
 @Entity
-public class ProductLines extends Model {
+public class ProductLineType extends Model {
 
     @Id
     @Basic(optional = false)
@@ -27,6 +27,6 @@ public class ProductLines extends Model {
     @OneToMany(mappedBy = "productId")
     private List<Produit> produitCollection;
 
-    public static Finder<String, ProductLines> find = new Finder<String,ProductLines>(ProductLines.class);
+    public static Finder<String, ProductLineType> find = new Finder<String,ProductLineType>(ProductLineType.class);
 
 }

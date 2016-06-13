@@ -18,6 +18,12 @@ public class Solution extends Model {
     @Size(min = 1, max = 55)
     @Column(name = "ID")
     private String id;
+    @Column(name = "FEE")
+    private Float fee;
+    @Column(name = "SENDING_DATE")
+    private Integer sendingDate;
+    @Column(name = "EVAL_SCORE")
+    private Float evalScore;
     @JoinColumn(name = "INSTANCE_ID", referencedColumnName = "ID")
     @ManyToOne
     private Instance instanceId;

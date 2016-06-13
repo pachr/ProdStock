@@ -18,16 +18,20 @@ public class Produit extends Model {
     @Size(min = 1, max = 55)
     @Column(name = "ID")
     private String id;
-    @Column(name = "SET_UP_TIME")
-    private Integer setUpTime;
-    @Column(name = "PRODUCTION_TIME")
-    private Integer productionTime;
-    @Column(name = "HEIGHT")
-    private Integer height;
-    @Column(name = "WIDTH")
-    private Integer width;
-    @Column(name = "MAX_UNIT")
-    private Integer maxUnit;
+    @JoinColumn(name = "PRODUCT_TYPE_ID", referencedColumnName = "ID")
+    @ManyToOne
+    private String productTypeId;
+    @Column(name = "START_PROUCTION")
+    private String startProduction;
+    @JoinColumn(name = "COMMAND_ID", referencedColumnName = "ID")
+    @ManyToOne
+    private String commandId;
+    @JoinColumn(name = "PRODUCT_LINE_ID", referencedColumnName = "ID")
+    @ManyToOne
+    private String productLineId;
+    @JoinColumn(name = "BOX_ID", referencedColumnName = "ID")
+    @ManyToOne
+    private String boxId;
     @JoinColumn(name = "INSTANCE_ID", referencedColumnName = "ID")
     @ManyToOne
     private Instance instanceId;
