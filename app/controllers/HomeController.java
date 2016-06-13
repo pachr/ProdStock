@@ -23,9 +23,6 @@ public class HomeController extends Controller {
      * <code>GET</code> request with a path of <code>/</code>.
      */
     public Result index() {
-        String id = "A";
-        Instance inst = Instance.find.byId("A");
-        System.out.println(inst);
         return ok(index.render("ProdStock Project"));
     }
 

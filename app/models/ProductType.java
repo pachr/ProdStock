@@ -18,7 +18,7 @@ public class ProductType extends Model{
     @NotNull
     @Size(min = 1, max = 55)
     @Column(name = "ID")
-    private String id;
+    private Integer id;
     @Column(name = "SET_UP_TIME")
     private Integer setUpTime;
     @Column(name = "PRODUCTION_TIME")

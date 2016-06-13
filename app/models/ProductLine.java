@@ -18,7 +18,9 @@ public class ProductLine extends Model {
     @NotNull
     @Size(min = 1, max = 55)
     @Column(name = "ID")
-    private String id;
+    private Integer id;
+    @Column(name = "NAME")
+    private String name;
     @Column(name = "PRODUCT_LINE_NUMBER")
     private Integer productLineNumber;
     @JoinColumn(name = "INSTANCE_ID", referencedColumnName = "ID")

@@ -18,11 +18,15 @@ public class Command extends Model {
     @NotNull
     @Size(min = 1, max = 55)
     @Column(name = "ID")
-    private String id;
+    private Integer id;
+    @Column(name = "NAME")
+    private String name;
     @Column(name = "MIN_TIME")
     private Integer minTime;
     @Column(name = "SENDING_TDATE")
     private Integer sendingTdate;
+    @Column(name = "REAL_TDATE")
+    private Integer realTdate;
     @Column(name = "FEE")
     private Float fee;
     @Column(name = "PRODUCT_ID_QUANTITY")
@@ -30,8 +34,6 @@ public class Command extends Model {
     @JoinColumn(name = "INSTANCE_ID", referencedColumnName = "ID")
     @ManyToOne
     private Instance instanceId;
-    @OneToMany(mappedBy = "commandId")
-    private List<Product> produitCollection;
 
     public static Finder<String, Command> find = new Finder<String, Command>(Command.class);
 

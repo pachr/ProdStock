@@ -4,79 +4,86 @@
 # --- !Ups
 
 create table box (
-  ID                        varchar(55) not null,
+  ID                        integer(55) auto_increment not null,
+  NAME                      varchar(255),
   box_type_id               varchar(255),
   command_id                varchar(255),
-  INSTANCE_ID               varchar(55),
+  INSTANCE_ID               integer(55),
   constraint pk_box primary key (ID))
 ;
 
 create table box_type (
-  ID                        varchar(55) not null,
+  ID                        integer(55) auto_increment not null,
   HEIGHT                    integer,
   WIDTH                     integer,
   PRICE                     float,
-  INSTANCE_ID               varchar(55),
+  INSTANCE_ID               integer(55),
   constraint pk_box_type primary key (ID))
 ;
 
 create table command (
-  ID                        varchar(55) not null,
+  ID                        integer(55) auto_increment not null,
+  NAME                      varchar(255),
   MIN_TIME                  integer,
   SENDING_TDATE             integer,
+  REAL_TDATE                integer,
   FEE                       float,
   PRODUCT_ID_QUANTITY       integer,
-  INSTANCE_ID               varchar(55),
+  INSTANCE_ID               integer(55),
   constraint pk_command primary key (ID))
 ;
 
 create table instance (
-  ID                        varchar(55) not null,
+  ID                        integer(55) auto_increment not null,
+  NAME                      varchar(255),
   constraint pk_instance primary key (ID))
 ;
 
 create table product (
-  ID                        varchar(55) not null,
-  PRODUCT_TYPE_ID           varchar(55),
+  ID                        integer(55) auto_increment not null,
+  NAME                      varchar(255),
+  PRODUCT_TYPE_ID           integer(55),
   START_PRODUCTION          varchar(255),
-  COMMAND_ID                varchar(55),
-  PRODUCT_LINE_ID           varchar(55),
-  BOX_ID                    varchar(55),
-  INSTANCE_ID               varchar(55),
+  COMMAND_ID                integer(55),
+  PRODUCT_LINE_ID           integer(55),
+  BOX_ID                    integer(55),
+  INSTANCE_ID               integer(55),
   constraint pk_product primary key (ID))
 ;
 
 create table product_line (
-  ID                        varchar(55) not null,
+  ID                        integer(55) auto_increment not null,
+  NAME                      varchar(255),
   PRODUCT_LINE_NUMBER       integer,
-  INSTANCE_ID               varchar(55),
+  INSTANCE_ID               integer(55),
   constraint pk_product_line primary key (ID))
 ;
 
 create table product_line_type (
-  ID                        varchar(55) not null,
+  ID                        integer(55) auto_increment not null,
   PRODUCT_LINE_NUMBER       integer,
-  INSTANCE_ID               varchar(55),
+  INSTANCE_ID               integer(55),
   constraint pk_product_line_type primary key (ID))
 ;
 
 create table product_type (
-  ID                        varchar(55) not null,
+  ID                        integer(55) auto_increment not null,
   SET_UP_TIME               integer,
   PRODUCTION_TIME           integer,
   HEIGHT                    integer,
   WIDTH                     integer,
   MAX_UNIT                  integer,
-  INSTANCE_ID               varchar(55),
+  INSTANCE_ID               integer(55),
   constraint pk_product_type primary key (ID))
 ;
 
 create table solution (
-  ID                        varchar(55) not null,
+  ID                        integer(55) auto_increment not null,
+  NAME                      varchar(255),
   FEE                       float,
   SENDING_DATE              integer,
   EVAL_SCORE                float,
-  INSTANCE_ID               varchar(55),
+  INSTANCE_ID               integer(55),
   constraint pk_solution primary key (ID))
 ;
 

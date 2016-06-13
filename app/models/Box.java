@@ -19,7 +19,9 @@ public class Box extends Model{
     @NotNull
     @Size(min = 1, max = 55)
     @Column(name = "ID")
-    private String id;
+    private Integer id;
+    @Column(name = "NAME")
+    private String name;
     @JoinColumn(name = "BOX_TYPE_ID", referencedColumnName = "ID")
     @ManyToOne
     private String boxTypeId;

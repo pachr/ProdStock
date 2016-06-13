@@ -20,7 +20,7 @@ public class BoxType extends Model{
     @NotNull
     @Size(min = 1, max = 55)
     @Column(name = "ID")
-    private String id;
+    private Integer id;
     @Column(name = "HEIGHT")
     private Integer height;
     @Column(name = "WIDTH")

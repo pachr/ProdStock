@@ -17,7 +17,9 @@ public class Solution extends Model {
     @NotNull
     @Size(min = 1, max = 55)
     @Column(name = "ID")
-    private String id;
+    private Integer id;
+    @Column(name = "NAME")
+    private String name;
     @Column(name = "FEE")
     private Float fee;
     @Column(name = "SENDING_DATE")
