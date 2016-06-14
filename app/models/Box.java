@@ -36,7 +36,7 @@ public class Box extends Model{
 
     public static Finder<String, Box> find = new Finder<String,Box>(Box.class);
 
-    public Integer currentWidth = 0;
+    public static Integer currentWidth = 0;
 
 
 

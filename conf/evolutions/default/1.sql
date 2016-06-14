@@ -9,7 +9,6 @@ create table box (
   box_type_id               varchar(255),
   command_id                varchar(255),
   INSTANCE_ID               integer(55),
-  current_width             integer,
   constraint pk_box primary key (ID))
 ;
 
