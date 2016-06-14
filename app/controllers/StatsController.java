@@ -81,15 +81,15 @@ public void AffichageTableau(Instance instance_id) {
 //de donnee quand elle a ete selectionne                                                   //
 /////////////////////////////////////////////////////////////////////////////////////////////
 public void ListerInstance(){
-	//<ul>
+	//<select name="instance">
 	for( Instance instance: Instance.find.all()){
-		//<li>
-			instance.getName();
+		//
+			//<option>instance.getName();</option>
 			//<
 				//creer boutton qui genere ???
-		//</li>
+		//
 	}
-	//</ul>
+	//</select>
 
 }
 
