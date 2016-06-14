@@ -179,13 +179,12 @@ public class HomeController extends Controller {
                     cmd.setFee(Float.parseFloat(arrayLine[3]));
                     cmd.save();
 
-                    Logger.debug(arrayLine[0]);
                     for (Integer i=0; i < nbProduct; i++) {
-                      Product p = new Product();
+
 
                       if (Integer.parseInt(arrayLine[cpt]) != 0) {
                         for (Integer j=0; j< Integer.parseInt(arrayLine[cpt]); j++) {
-
+                          Product p = new Product();
                           p.setInstanceId(inst);
                           p.setName(arrayProduct.get(i));
                           List<ProductType> ptt = ProductType.find.where().ilike("Instance_id", Integer.toString(instance_id)).ilike("Name", arrayProduct.get(i)).findList();
@@ -194,7 +193,6 @@ public class HomeController extends Controller {
                           p.setCommandId(cmd);
 
                           p.save();
-                          Logger.debug(arrayProduct.get(i));
                           compteur++;
                         }
                       }
