@@ -36,6 +36,11 @@ public class Box extends Model{
 
     public static Finder<String, Box> find = new Finder<String,Box>(Box.class);
 
+    public static Integer currentWidth = 0;
+
+
+
+
 
 	/**
 	* Returns value of id
@@ -132,4 +137,32 @@ public class Box extends Model{
 	public void setProduitCollection(List<Product> produitCollection) {
 		this.produitCollection = produitCollection;
 	}
+
+	/**
+	* Returns value of currentWidth
+	* @return
+	*/
+	public Integer getCurrentWidth() {
+		return currentWidth;
+	}
+
+	/**
+	* Sets new value of currentWidth
+	* @param
+	*/
+	public void setCurrentWidth(Integer currentWidth) {
+		this.currentWidth = currentWidth;
+	}
+
+
+  public Boolean isOverwidthed(Integer productWidth, Integer boxMaxWidth){
+    if(this.currentWidth + productWidth > boxMaxWidth){
+      // On dépasse
+      return true;
+    }
+    else{
+      return false;
+    }
+  }
+
 }
