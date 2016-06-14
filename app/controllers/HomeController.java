@@ -10,6 +10,7 @@ import java.nio.charset.Charset;
 import java.io.*;
 import java.util.*;
 
+
 /**
  * This controller contains an action to handle HTTP requests
  * to the application's home page.
@@ -23,12 +24,33 @@ public class HomeController extends Controller {
      * <code>GET</code> request with a path of <code>/</code>.
      */
     public Result index() {
-        return ok(index.render("ProdStock Project"));
+        List<Instance> instances = Instance.find.all();
+        return ok(views.html.index.render("ProdStock Project", instances));
+    }
+
+    public Result instanceTreatment() {
+      String[] postAction = request().body().asFormUrlEncoded().get("action");
+      if (postAction == null || postAction.length == 0) {
+        return badRequest("You must provide a valid action");
+      } else {
+        String action = postAction[0];
+        if ("launch-script".equals(action)) {
+          return script();
+        } else if ("generate-sol".equals(action)) {
+          return generateSol();
+        } else {
+          return badRequest("This action is not allowed");
+        }
+      }
+    }
+    private static Result generateSol() {
+
+      return ok("implement your business here");
     }
 
     public Result script() {
       // Instance uploadé que l'on reçcoit en paramètre.
-       /* String instance_id = "1";
+        String instance_id = "1";
         Instance instance = Instance.find.byId(instance_id);
         List<ProductType> productTypeList = ProductType.find.where().ilike("Instance_id", instance_id).findList();
         List<ProductLineType> productLineTypeList = ProductLineType.find.where().ilike("Instance_id", instance_id).findList();
@@ -44,7 +66,7 @@ public class HomeController extends Controller {
         prodLine.setProductLineNumber(productLineType.getId());
         prodLine.setInstanceId(instance);
         prodLine.save();
-    
+
         for(int j = 0; j < productTypeList.size(); j++){
             // On get la liste des produits d'un type
             List<Product> productList = Product.find.where().ilike("PRODUCT_TYPE_ID", productTypeList.get(j).getId().toString()).findList();
@@ -68,7 +90,7 @@ public class HomeController extends Controller {
                 Command c = p.getCommandId();
 
                 // On regarde si il y a déjà un box associé à cette commande
-               /*Integer nbBoxCommand = Box.find.where().ilike("Command_id", c.getId().toString()).findList().size();
+               Integer nbBoxCommand = Box.find.where().ilike("Command_id", c.getId().toString()).findList().size();
                 if(nbBoxCommand == 0){
                   // On doit acheter un nouveau box pour cette commande --> Par défaut on va choisir le plus grand
                   BoxType boxMaxSize = BoxType.find.where().ilike("INSTANCE_ID", instance_id).orderBy("height*width desc").findList().get(0);
@@ -76,7 +98,7 @@ public class HomeController extends Controller {
                 }
 
              }
-        }*/
+        }
       return ok("FDP");
     }
 
@@ -89,6 +111,7 @@ public class HomeController extends Controller {
             String content = null;
             String readLine = null;
             Integer instance_id = 0;
+            Integer compteur = 0;
             String[] arrayLine = null;
 
             Integer emptyLines = 0;
@@ -107,7 +130,7 @@ public class HomeController extends Controller {
               dis = new DataInputStream(bis);
 
               Instance inst = new Instance();
-              inst.setName(file.getName());
+              inst.setName(fileName);
               inst.save();
               instance_id = inst.getId();
 
@@ -147,6 +170,7 @@ public class HomeController extends Controller {
 
                     break;
                   case 2:
+                    Integer cpt = 4;
                     Command cmd = new Command();
                     cmd.setInstanceId(inst);
                     cmd.setName(arrayLine[0]);
@@ -155,17 +179,24 @@ public class HomeController extends Controller {
                     cmd.setFee(Float.parseFloat(arrayLine[3]));
                     cmd.save();
 
-
                     for (Integer i=0; i < nbProduct; i++) {
-                      Product p = new Product();
-                      p.setInstanceId(inst);
-                      p.setName(arrayProduct.get(i));
-                      List<ProductType> ptt = ProductType.find.where().ilike("Instance_id", Integer.toString(instance_id)).ilike("Name", arrayProduct.get(i)).findList();
-                      Logger.debug("i");
-                      p.setProductTypeId(ptt.get(0));
-                      p.setCommandId(cmd);
-                      p.save();
 
+
+                      if (Integer.parseInt(arrayLine[cpt]) != 0) {
+                        for (Integer j=0; j< Integer.parseInt(arrayLine[cpt]); j++) {
+                          Product p = new Product();
+                          p.setInstanceId(inst);
+                          p.setName(arrayProduct.get(i));
+                          List<ProductType> ptt = ProductType.find.where().ilike("Instance_id", Integer.toString(instance_id)).ilike("Name", arrayProduct.get(i)).findList();
+
+                          p.setProductTypeId(ptt.get(0));
+                          p.setCommandId(cmd);
+
+                          p.save();
+                          compteur++;
+                        }
+                      }
+                      cpt ++;
                     }
                     break;
                   case 3:
@@ -194,7 +225,7 @@ public class HomeController extends Controller {
             } catch (IOException e) {
               e.printStackTrace();
             }
-            return ok("Upload success");
+            return ok(compteur.toString());
         } else {
             flash("error", "Missing file");
             return badRequest();

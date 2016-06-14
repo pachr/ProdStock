@@ -1,31 +1,66 @@
 @*
- * This template takes a single argument, a String containing a
- * message to display.
- *@
-@(message: String)
-
-@*
- * Call the `main` template with two arguments. The first
- * argument is a `String` with the title of the page, the second
- * argument is an `Html` object containing the body of the page.
- *@
-@main("ProdStock") {
-
+* This template takes a single argument, a String containing a
+* message to display.
+*@
+@(message: String, instances: List[Instance])
     @*
-     * Get an `Html` object by calling the built-in Play welcome
-     * template and passing a `String` message.
-     *@
-    <form action="@routes.HomeController.upload()" enctype="multipart/form-data" method="post">
+    * Call the `main` template with two arguments. The first
+    * argument is a `String` with the title of the page, the second
+    * argument is an `Html` object containing the body of the page.
+    *@
+    @main("ProdStock") {
+        @*
+        * Get an `Html` object by calling the built-in Play welcome
+        * template and passing a `String` message.
+        *@
+        <div class="row">
+            <div class="col-md-12">
+                <div class="col-md-6">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">Uploader vos fichiers d'instances</div>
+                        <div class="panel-body">
+                            <form action="@routes.HomeController.upload()" enctype="multipart/form-data" method="post">
+                                <div class="input-group">
+                                    <div>
+                                        <label class="control-label">Fichier d'instance</label>
+                                        <input name="instance-file" id="input-instance-file" type="file" class="form-control">
+                                    </div>
 
-        <input type="file" name="instance-file">
-        <p>
-            <input type="submit">
-        </p>
-
-    </form>
-    <form action="@routes.HomeController.script()" enctype="multipart/form-data" method="post">
-        <p>
-            <input type="submit" value="Submit script">
-        </p>
-    </form>
-}
+                                    <div class="btn-group padding-top" role="group">
+                                        <button type="submit" class="btn btn-primary">Uploader</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="panel panel-success">
+                        <div class="panel-heading">Générer la solution pour une instance</div>
+                        <div class="panel-body">
+                            <form action="@routes.HomeController.instanceTreatment()" enctype="multipart/form-data" method="post">
+                                <div class="dropdown">
+                                    <div class="form-group">
+                                        <label for="sel1">Sélectionner l'instance:</label>
+                                        <select class="form-control" id="instances-list">
+                                        @for(instance <- instances) {
+                                            <option class="instance" id="@instance.getId">
+                                            @instance.getName()
+                                            </option>
+                                        }
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="btn-group" role="group">
+                                    <input type="submit" name="action" value="launch-script" class="btn btn-info">
+                                </div>
+                                <div class="btn-group" role="group">
+                                    <input type="submit" name="action" value="generate-sol" class="btn btn-info">
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
