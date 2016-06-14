@@ -75,13 +75,11 @@ public class HomeController extends Controller {
 
                   switch (emptyLines) {
                   case 0:
-                    Logger.debug(arrayLine[0]);
                     nbProduct = Integer.parseInt(arrayLine[0]);
                     ProductLineType plt = new ProductLineType();
                     plt.setProductLineNumber(Integer.parseInt(arrayLine[3]));
                     plt.setInstanceId(inst);
                     plt.save();
-                    Logger.debug("case 0");
                     break;
                   case 1:
 
@@ -100,7 +98,6 @@ public class HomeController extends Controller {
 
                     break;
                   case 2:
-                    Logger.debug("case 1");
                     Command cmd = new Command();
                     cmd.setInstanceId(inst);
                     cmd.setName(arrayLine[0]);
@@ -111,11 +108,9 @@ public class HomeController extends Controller {
 
 
                     for (Integer i=0; i < nbProduct; i++) {
-                      Logger.debug("i");
                       Product p = new Product();
                       p.setInstanceId(inst);
                       p.setName(arrayProduct.get(i));
-                      Logger.debug(arrayProduct.get(i));
                       List<ProductType> ptt = ProductType.find.where().ilike("Instance_id", Integer.toString(instance_id)).ilike("Name", arrayProduct.get(i)).findList();
                       Logger.debug("i");
                       p.setProductTypeId(ptt.get(0));
@@ -123,10 +118,8 @@ public class HomeController extends Controller {
                       p.save();
 
                     }
-                    Logger.debug("fin case 2");
                     break;
                   case 3:
-                    Logger.debug("case 3");
                     BoxType bt = new BoxType();
                     bt.setInstanceId(inst);
                     bt.setName(arrayLine[0]);
@@ -152,7 +145,7 @@ public class HomeController extends Controller {
             } catch (IOException e) {
               e.printStackTrace();
             }
-            return ok("YO");
+            return ok("Upload success");
         } else {
             flash("error", "Missing file");
             return badRequest();
