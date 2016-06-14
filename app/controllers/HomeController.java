@@ -23,8 +23,12 @@ public class HomeController extends Controller {
      * <code>GET</code> request with a path of <code>/</code>.
      */
     public Result index() {
-        // Instance uploadé que l'on reçcoit en paramètre.
-        /*String instance_id = "1";
+        return ok(index.render("ProdStock Project"));
+    }
+
+    public Result script() {
+      // Instance uploadé que l'on reçcoit en paramètre.
+       /* String instance_id = "1";
         Instance instance = Instance.find.byId(instance_id);
         List<ProductType> productTypeList = ProductType.find.where().ilike("Instance_id", instance_id).findList();
         List<ProductLineType> productLineTypeList = ProductLineType.find.where().ilike("Instance_id", instance_id).findList();
@@ -73,13 +77,6 @@ public class HomeController extends Controller {
 
              }
         }*/
-
-
-        
-        return ok(index.render("ProdStock Project"));
-    }
-
-    public Result script() {
       return ok("FDP");
     }
 
