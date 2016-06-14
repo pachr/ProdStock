@@ -14,6 +14,7 @@ create table box (
 
 create table box_type (
   ID                        integer(55) auto_increment not null,
+  NAME                      varchar(255),
   HEIGHT                    integer,
   WIDTH                     integer,
   PRICE                     float,
@@ -68,6 +69,7 @@ create table product_line_type (
 
 create table product_type (
   ID                        integer(55) auto_increment not null,
+  NAME                      varchar(255),
   SET_UP_TIME               integer,
   PRODUCTION_TIME           integer,
   HEIGHT                    integer,

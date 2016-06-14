@@ -21,6 +21,8 @@ public class BoxType extends Model{
     @Size(min = 1, max = 55)
     @Column(name = "ID")
     private Integer id;
+    @Column(name = "NAME")
+    private String name;
     @Column(name = "HEIGHT")
     private Integer height;
     @Column(name = "WIDTH")
