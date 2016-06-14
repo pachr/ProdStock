@@ -13,11 +13,13 @@ public class Pile{
 	private Integer heightMax;
 	private Integer boxId;
 	private Integer productTypeId;
+	private Integer commandId;
 
-	public Pile(Integer boxId, Integer productTypeId, Integer productWidth, Integer productHeight, Integer boxHeightMax ){
+	public Pile(Integer boxId, Integer productTypeId, Integer commandId, Integer productWidth, Integer productHeight, Integer boxHeightMax ){
 		// Déclaration d'une nouvelle pile
 		this.boxId = boxId;
 		this.productTypeId = productTypeId;
+		this.commandId = commandId;
 
 		this.width = productWidth;
 		this.height = productHeight;
@@ -137,5 +139,21 @@ public class Pile{
 	*/
 	public void setProductTypeId(Integer productTypeId) {
 		this.productTypeId = productTypeId;
+	}
+
+	/**
+	* Returns value of commandId
+	* @return
+	*/
+	public Integer getCommandId() {
+		return commandId;
+	}
+
+	/**
+	* Sets new value of commandId
+	* @param
+	*/
+	public void setCommandId(Integer commandId) {
+		this.commandId = commandId;
 	}
 }

@@ -93,21 +93,23 @@ public class HomeController extends Controller {
                   productBox.save();
 
                   // On doit déclarer une nouvelle pile dans laquelle on assure la
-                  Pile pile = new Pile(productBox.getId(), productTypeId, productType.getWidth(), productType.getHeight(), boxMaxSize.getHeight());
+                  Pile pile = new Pile(productBox.getId(), productTypeId, command.getId(), productType.getWidth(), productType.getHeight(), boxMaxSize.getHeight());
                   listPile.add(pile);
                 }
                 else{
-                  // On teste si il y a une pile dispo de la bonne taille
+                  // On teste si il y a une pile dispo de la bonne taille pour la bonne commande et du bon type de produit
                   Boolean endStatementFlag = false;
                   for(Integer n = 0; n <listPile.size(); n++){
-                    if(listPile.get(n).checkProductTypeId(productTypeId)){
-                      if(!listPile.get(n).isPileOversized(productType.getHeight())){
-                        Logger.debug("On a joute le produit a la pile trouvé");
-                        // On ajoute dans la pile en mettant à jour sa taille
-                        listPile.get(n).addProduct(productType.getHeight());
-                        // On retourve la box pour pouvoir l'enregistrer derrière
-                        productBox = Box.find.byId(listPile.get(n).getBoxId().toString());
-                        endStatementFlag = true;
+                    if(listPile.get(n).getCommandId() == command.getId()){
+                      if(listPile.get(n).checkProductTypeId(productTypeId)){
+                        if(!listPile.get(n).isPileOversized(productType.getHeight())){
+                          Logger.debug("On a trouvé une pile de la meme commande, product type et n'ayant pas atteint taille ma");
+                          // On ajoute dans la pile en mettant à jour sa taille
+                          listPile.get(n).addProduct(productType.getHeight());
+                          // On retourve la box pour pouvoir l'enregistrer derrière
+                          productBox = Box.find.byId(listPile.get(n).getBoxId().toString());
+                          endStatementFlag = true;
+                        }
                       }
                     }
                   }
@@ -121,11 +123,13 @@ public class HomeController extends Controller {
                         Logger.debug("On ajoute une nouvelle pile dans un box libre en largeur");
                         productBox = listBox.get(n);
                         // On se créé une nouvelle pile et l'ajoute dans la pox
-                        Pile pile = new Pile(productBox.getId(), productTypeId, productType.getWidth(), productType.getHeight(), boxMaxSize.getHeight());
+                        Pile pile = new Pile(productBox.getId(), productTypeId, command.getId(), productType.getWidth(), productType.getHeight(), boxMaxSize.getHeight());
                         listPile.add(pile);
 
                         // On met à jour la taille du box en ajoutant à la largeur, la largeur du produit
+                        Logger.debug(productBox.getCurrentWidth().toString());
                         productBox.setCurrentWidth(productBox.getCurrentWidth() + productType.getWidth());
+                        Logger.debug(productBox.getCurrentWidth().toString());
                         endStatementFlag = true;
                       }
                     }
@@ -142,7 +146,7 @@ public class HomeController extends Controller {
                       productBox.save();
 
                       // On doit déclarer une nouvelle pile dans laquelle on assure la
-                      Pile pile = new Pile(productBox.getId(), productTypeId, productType.getWidth(), productType.getHeight(), boxMaxSize.getHeight());
+                      Pile pile = new Pile(productBox.getId(), productTypeId, command.getId(), productType.getWidth(), productType.getHeight(), boxMaxSize.getHeight());
                       listPile.add(pile);
                     }
                   }
@@ -154,7 +158,7 @@ public class HomeController extends Controller {
 
                 // On get toutes les produits de la commande dont le champ box id est nul => Ils n'ont pas été affecté la commande n'est pas complète
                 List<Product> productCommandList = Product.find.where().ilike("command_id", command.getId().toString()).ilike("box_id", null).findList();*/
-                Logger.debug("fin traitement produit");
+                //Logger.debug("fin traitement produit");
               }
             }
           return ok("FDP");
