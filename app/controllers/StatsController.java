@@ -18,7 +18,7 @@ public class StatsController extends Controller {
 
     public Result stats() {
     	String toto="yo";
-        return ok(index.render(toto));
+        return ok(stats.render(toto));
     }
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -28,7 +28,7 @@ public class StatsController extends Controller {
 public double calcEval(){
     double eval = 0;
     for(BoxType box_type: BoxType.find.all()) {
-        eval = eval + Box.find.where().ilike("box_type_id", box_type.getId()).findRowCount() * box_type.getPrice();
+        eval = eval + Box.find.where().ilike("box_type_id", box_type.getId().toString()).findRowCount() * box_type.getPrice();
     }
     for (Command commande : Command.find.all()) {
         eval = eval + Math.abs(commande.getSendingTdate() - commande.getRealTdate());
@@ -42,8 +42,7 @@ public double calcEval(){
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
 public Solution getFieldSol(String instance_id){
-	Solution solution = new Solution();
-	solution = Solution.find.where().ilike("instance_id", instance_id);
+	Solution solution = (Solution) Solution.find.where().ilike("instance_id", instance_id);
 	return solution;
 }
 
@@ -52,7 +51,7 @@ public Solution getFieldSol(String instance_id){
 //(instance + Commande -> produit de la commande + ligne de prod + boxes etc …) //
 //////////////////////////////////////////////////////////////////////////////////
 
-public void AffichageTableau(Instance instance_id) {
+/*public void AffichageTableau(Instance instance_id) {
   for (BoxType box_type : BoxType.find.where().ilike("instance_id", instance_id)) {
 
     long countBoxes = Box.find.where().ilike("box_type_id,instance_id", box_type.getId(),instance_id).findRowCount();
@@ -91,6 +90,6 @@ public void ListerInstance(){
 	}
 	//</select>
 
-}
+}*/
 
 }
