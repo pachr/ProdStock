@@ -32,8 +32,6 @@ public class ProductLine extends Model {
     public static Finder<String, ProductLine> find = new Finder<String,ProductLine>(ProductLine.class);
 
 
-
-
 	/**
 	* Returns value of id
 	* @return
@@ -113,4 +111,5 @@ public class ProductLine extends Model {
 	public void setProduitCollection(List<Product> produitCollection) {
 		this.produitCollection = produitCollection;
 	}
+
 }
