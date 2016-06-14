@@ -40,6 +40,7 @@ public class ProductType extends Model{
     public static Finder<String, ProductType> find = new Finder<String, ProductType>(ProductType.class);
 
 
+
 	/**
 	* Returns value of id
 	* @return
@@ -54,6 +55,22 @@ public class ProductType extends Model{
 	*/
 	public void setId(Integer id) {
 		this.id = id;
+	}
+
+	/**
+	* Returns value of name
+	* @return
+	*/
+	public String getName() {
+		return name;
+	}
+
+	/**
+	* Sets new value of name
+	* @param
+	*/
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	/**

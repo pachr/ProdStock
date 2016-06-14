@@ -36,6 +36,7 @@ public class BoxType extends Model{
     public static Finder<String, BoxType> find = new Finder<String,BoxType>(BoxType.class);
 
 
+
 	/**
 	* Returns value of id
 	* @return
@@ -50,6 +51,22 @@ public class BoxType extends Model{
 	*/
 	public void setId(Integer id) {
 		this.id = id;
+	}
+
+	/**
+	* Returns value of name
+	* @return
+	*/
+	public String getName() {
+		return name;
+	}
+
+	/**
+	* Sets new value of name
+	* @param
+	*/
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	/**
@@ -116,4 +133,5 @@ public class BoxType extends Model{
 		this.instanceId = instanceId;
 	}
 
+	
 }

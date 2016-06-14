@@ -1,14 +1,15 @@
 package controllers;
 
-import models.Instance;
+import models.*;
 import play.mvc.*;
 
 import views.html.*;
 
 import java.nio.charset.Charset;
 import java.io.*;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import play.Logger;
+
 
 /**
  * This controller contains an action to handle HTTP requests
@@ -34,7 +35,7 @@ public class HomeController extends Controller {
             String contentType = instanceFile.getContentType();
             String content = null;
             String readLine = null;
-            String instance_id = null;
+            Integer instance_id = 0;
             String[] arrayLine = null;
 
             Integer emptyLines = 0;
@@ -43,6 +44,7 @@ public class HomeController extends Controller {
             FileInputStream fis = null;
             BufferedInputStream bis = null;
             DataInputStream dis = null;
+            List<String> arrayProduct = new ArrayList<String>();
 
             try {
               fis = new FileInputStream(file);
@@ -55,6 +57,7 @@ public class HomeController extends Controller {
               inst.setName(file.getName());
               inst.save();
               instance_id = inst.getId();
+
               // dis.available() returns 0 if the file does not have more lines.
               while (dis.available() != 0) {
                 readLine = dis.readLine();
@@ -63,53 +66,70 @@ public class HomeController extends Controller {
                 if (readLine == null || "".equals(readLine)) {
                   emptyLines ++;
                 } else{
-                  arrayLine = readLine.split("   ", -1);
+
+                  arrayLine = readLine.split(" +", -1);
+
                   switch (emptyLines) {
                   case 0:
-                    nbProduct = arrayLine[0];
-                    String[] arrayProduct = new String[nbProduct];
+                    Logger.debug(arrayLine[0]);
+                    nbProduct = Integer.parseInt(arrayLine[0]);
                     ProductLineType plt = new ProductLineType();
-                    plt.setProductLineNumber(arrayLine[3]);
-                    plt.instanceId(instance_id);
+                    plt.setProductLineNumber(Integer.parseInt(arrayLine[3]));
+                    plt.setInstanceId(inst);
                     plt.save();
+                    Logger.debug("case 0");
                     break;
                   case 1:
-                    ProductType pt = new ProductType();
-                    pt.setInstanceId(instance_id);
-                    pt.setSetUpTime(arrayLine[1]);
-                    pt.setProductionTime(arrayLine[2]);
-                    pt.setHeight(arrayLine[3]);
-                    pt.setWidth(arrayLine[4]);
-                    pt.setMaxUnit(arrayLine[5]);
 
-                    arrayProduct.add(arrayLine[1]);
+                    ProductType pt = new ProductType();
+                    pt.setInstanceId(inst);
+                    pt.setName(arrayLine[0]);
+                    pt.setSetUpTime(Integer.parseInt(arrayLine[1]));
+                    pt.setProductionTime(Integer.parseInt(arrayLine[2]));
+                    pt.setHeight(Integer.parseInt(arrayLine[3]));
+                    pt.setWidth(Integer.parseInt(arrayLine[4]));
+                    pt.setMaxUnit(Integer.parseInt(arrayLine[5]));
+                    pt.save();
+
+                    arrayProduct.add(arrayLine[0]);
+
+
                     break;
                   case 2:
+                    Logger.debug("case 1");
                     Command cmd = new Command();
-                    cmd.setInstanceId(instance_id);
+                    cmd.setInstanceId(inst);
                     cmd.setName(arrayLine[0]);
-                    cmd.setMinTime(arrayLine[1]);
-                    cmd.setSendingTdate(arrayLine[2]);
-                    cmd.setFee(arrayLine[3]);
+                    cmd.setMinTime(Integer.parseInt(arrayLine[1]));
+                    cmd.setSendingTdate(Integer.parseInt(arrayLine[2]));
+                    cmd.setFee(Float.parseFloat(arrayLine[3]));
                     cmd.save();
 
 
-                    for (i=0; i<=nbProduct; i++) {
+                    for (Integer i=0; i < nbProduct; i++) {
+                      Logger.debug("i");
                       Product p = new Product();
-                      p.setInstanceId(instance_id);
-                      p.setName(arrayProduct[i]);
-                      ProductType pt = ProductType.find.where().ilike("Instance_id", instance_id).ilike("Product_name", arrayProduct[i]).get();
-                      p.setProductTypeId(pt.getId());
-                      p.setCommandId(cmd.getId());
+                      p.setInstanceId(inst);
+                      p.setName(arrayProduct.get(i));
+                      Logger.debug(arrayProduct.get(i));
+                      List<ProductType> ptt = ProductType.find.where().ilike("Instance_id", Integer.toString(instance_id)).ilike("Name", arrayProduct.get(i)).findList();
+                      Logger.debug("i");
+                      p.setProductTypeId(ptt.get(0));
+                      p.setCommandId(cmd);
                       p.save();
+
                     }
+                    Logger.debug("fin case 2");
+                    break;
                   case 3:
+                    Logger.debug("case 3");
                     BoxType bt = new BoxType();
-                    bt.setInstanceId(instanceId);
+                    bt.setInstanceId(inst);
                     bt.setName(arrayLine[0]);
-                    bt.setHeight(arrayLine[1]);
-                    bt.setWidth(arrayLine[2]);
-                    bt.setPrice(arrayLine[3]);
+                    bt.setHeight(Integer.parseInt(arrayLine[1]));
+                    bt.setWidth(Integer.parseInt(arrayLine[2]));
+                    bt.setPrice(Float.parseFloat(arrayLine[3]));
+                    bt.save();
                     break;
                   default:
                     break;
