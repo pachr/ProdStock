@@ -10,6 +10,9 @@ import java.nio.charset.Charset;
 import java.io.*;
 import java.util.*;
 
+import play.data.DynamicForm;
+import play.data.Form;
+
 
 /**
  * This controller contains an action to handle HTTP requests
@@ -28,25 +31,10 @@ public class HomeController extends Controller {
         return ok(views.html.index.render("ProdStock Project", instances));
     }
 
-    public Result instanceTreatment() {
-      String[] postAction = request().body().asFormUrlEncoded().get("action");
-      if (postAction == null || postAction.length == 0) {
-        return badRequest("You must provide a valid action");
-      } else {
-        String action = postAction[0];
-        if ("launch-script".equals(action)) {
-          return script();
-        } else if ("generate-sol".equals(action)) {
-          return generateSol();
-        } else {
-          return badRequest("This action is not allowed");
-        }
-      }
+    public Result visualisation() {
+      
     }
-    private static Result generateSol() {
 
-      return ok("implement your business here");
-    }
 
     public Result script() {
       // Instance uploadé que l'on reçcoit en paramètre.
