@@ -38,7 +38,7 @@
                     <div class="panel panel-success">
                         <div class="panel-heading">Générer la solution pour une instance</div>
                         <div class="panel-body">
-                            <form action="@routes.HomeController.script()" enctype="multipart/form-data" method="post">
+                            <form action="@routes.HomeController.instanceTreatment()" enctype="multipart/form-data" method="post">
                                 <div class="dropdown">
                                     <div class="form-group">
                                         <label for="sel1">Sélectionner l'instance:</label>
@@ -52,7 +52,10 @@
                                     </div>
                                 </div>
                                 <div class="btn-group" role="group">
-                                    <input type="submit" value="Lancer le script" class="btn btn-info">
+                                    <input type="submit" name="action" value="launch-script" class="btn btn-info">
+                                </div>
+                                <div class="btn-group" role="group">
+                                    <input type="submit" name="action" value="generate-sol" class="btn btn-info">
                                 </div>
                             </form>
                         </div>
