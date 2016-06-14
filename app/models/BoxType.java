@@ -134,4 +134,5 @@ public class BoxType extends Model{
 	}
 
 
+
 }

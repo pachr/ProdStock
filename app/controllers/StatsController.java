@@ -16,10 +16,20 @@ import models.Box;
 
 public class StatsController extends Controller {
 
-    public Result stats() {
-    	String toto="yo";
-        return ok(stats.render(toto));
-    }
+public Result stats() {
+	//double eval = calcEval();
+	String toto = "je suis la";
+	Instance inst = Instance.find.byId("1");
+	List<BoxType> bxTypes = BoxType.find.where().eq("INSTANCE_ID", inst.getId()).findList();
+	List<Command> commandes = Command.find.where().eq("instance_id", inst.getId()).findList();
+
+    return ok(views.html.stats.render(inst, bxTypes,commandes));
+}
+
+public long calculNbBox(BoxType box_type) {
+	//long countBoxes = Box.find.where().eq("box_type_id,instance_id", box_type.getId(),instance_id).findRowCount();
+	return 0;
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 //Calcul de l'eval de la solution (formule du Sujet) cf Modele fichier solution sur drive//
@@ -51,8 +61,10 @@ public Solution getFieldSol(String instance_id){
 //(instance + Commande -> produit de la commande + ligne de prod + boxes etc …) //
 //////////////////////////////////////////////////////////////////////////////////
 
-/*public void AffichageTableau(Instance instance_id) {
-  for (BoxType box_type : BoxType.find.where().ilike("instance_id", instance_id)) {
+/*public void AffichageTableau(Instance instance) {
+	int instance_id = instance.getId();
+	List<BoxType> bxType = BoxType.find.where().ilike("INSTANCE_ID", String.Valueof(instance_id));
+  for (BoxType box_type : BoxType.find.where().ilike("INSTANCE_ID", String.Valueof(instance_id))) {
 
     long countBoxes = Box.find.where().ilike("box_type_id,instance_id", box_type.getId(),instance_id).findRowCount();
     //<tr>
@@ -73,7 +85,7 @@ public Solution getFieldSol(String instance_id){
     //<td>ecart * com.getFee();</td>
     //</tr>
   }
-}
+}*/
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 //Lister toute les instances dans un dropdown et creer un bouton qui genere sont tableau   //
@@ -90,6 +102,6 @@ public void ListerInstance(){
 	}
 	//</select>
 
-}*/
+}
 
 }

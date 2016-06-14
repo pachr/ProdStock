@@ -1,4 +1,26 @@
+@(instance: Instance, bxTypes: List[BoxType], commandes: List[Command])
+@bxTypes.get(0).getName()
+@commandes.get(0).getName()
 
-@(message: String)
+<table>
+@for(box_type <- bxTypes) {
+     <tr>
+    	<td>@box_type.getName()</td>
+    	<td>@box_type.getPrice()</td>
+    	<td>routes.controllers.StatsController.calculNbBox(@box_type)</td>
+    </tr>
+}
+</table>
 
-dsqdsfghfdsqsgfvc
+<table>
+@for(commande <- commandes) {
+     <tr>
+    	<td>@commande.getName()</td>
+	    <td>@commande.getSendingTdate()</td>
+	    <td>@commande.getRealTdate()</td>
+	    <td>@commande.getFee()</td>
+	    <td>@commande.getSendingTdate()-@commande.getRealTdate()</td>
+	    <td>@commande.getSendingTdate()-@commande.getRealTdate() * @commande.getFee()</td>
+    </tr>
+}
+</table>
