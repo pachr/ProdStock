@@ -79,6 +79,10 @@ public class HomeController extends Controller {
         return ok(index.render("ProdStock Project"));
     }
 
+    public Result script() {
+      return ok("FDP");
+    }
+
     public Result upload() {
         Http.MultipartFormData<File> body = request().body().asMultipartFormData();
         Http.MultipartFormData.FilePart<File> instanceFile = body.getFile("instance-file");
@@ -159,7 +163,6 @@ public class HomeController extends Controller {
                       Product p = new Product();
                       p.setInstanceId(inst);
                       p.setName(arrayProduct.get(i));
-                      Logger.debug(arrayProduct.get(i));
                       List<ProductType> ptt = ProductType.find.where().ilike("Instance_id", Integer.toString(instance_id)).ilike("Name", arrayProduct.get(i)).findList();
                       Logger.debug("i");
                       p.setProductTypeId(ptt.get(0));
@@ -194,7 +197,7 @@ public class HomeController extends Controller {
             } catch (IOException e) {
               e.printStackTrace();
             }
-            return ok("YO");
+            return ok("Upload success");
         } else {
             flash("error", "Missing file");
             return badRequest();
