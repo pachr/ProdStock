@@ -28,7 +28,7 @@ public class HomeController extends Controller {
 
     public Result script() {
       // Instance uploadé que l'on reçcoit en paramètre.
-       /* String instance_id = "1";
+        String instance_id = "1";
         Instance instance = Instance.find.byId(instance_id);
         List<ProductType> productTypeList = ProductType.find.where().ilike("Instance_id", instance_id).findList();
         List<ProductLineType> productLineTypeList = ProductLineType.find.where().ilike("Instance_id", instance_id).findList();
@@ -44,7 +44,7 @@ public class HomeController extends Controller {
         prodLine.setProductLineNumber(productLineType.getId());
         prodLine.setInstanceId(instance);
         prodLine.save();
-    
+
         for(int j = 0; j < productTypeList.size(); j++){
             // On get la liste des produits d'un type
             List<Product> productList = Product.find.where().ilike("PRODUCT_TYPE_ID", productTypeList.get(j).getId().toString()).findList();
@@ -68,7 +68,7 @@ public class HomeController extends Controller {
                 Command c = p.getCommandId();
 
                 // On regarde si il y a déjà un box associé à cette commande
-               /*Integer nbBoxCommand = Box.find.where().ilike("Command_id", c.getId().toString()).findList().size();
+               Integer nbBoxCommand = Box.find.where().ilike("Command_id", c.getId().toString()).findList().size();
                 if(nbBoxCommand == 0){
                   // On doit acheter un nouveau box pour cette commande --> Par défaut on va choisir le plus grand
                   BoxType boxMaxSize = BoxType.find.where().ilike("INSTANCE_ID", instance_id).orderBy("height*width desc").findList().get(0);
@@ -76,7 +76,7 @@ public class HomeController extends Controller {
                 }
 
              }
-        }*/
+        }
       return ok("FDP");
     }
 
