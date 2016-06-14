@@ -22,26 +22,26 @@ public Result stats() {
 	Instance inst = Instance.find.byId("1");
 	List<BoxType> bxTypes = BoxType.find.where().eq("INSTANCE_ID", inst.getId()).findList();
 	List<Command> commandes = Command.find.where().eq("instance_id", inst.getId()).findList();
+	Float eval = calcEval(bxTypes,commandes);
 
-    return ok(views.html.stats.render(inst, bxTypes,commandes));
+    return ok(views.html.stats.render(eval, inst, bxTypes,commandes));
 }
 
-public long calculNbBox(BoxType box_type) {
+/*public Result calculNbBox() {
 	//long countBoxes = Box.find.where().eq("box_type_id,instance_id", box_type.getId(),instance_id).findRowCount();
-	return 0;
-}
+	return ok(views.html.stats.render("0");
+}*/
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 //Calcul de l'eval de la solution (formule du Sujet) cf Modele fichier solution sur drive//
 /////////////////////////////////////////////////////////////////////////////////////////// 
-
-public double calcEval(){
-    double eval = 0;
-    for(BoxType box_type: BoxType.find.all()) {
-        eval = eval + Box.find.where().ilike("box_type_id", box_type.getId().toString()).findRowCount() * box_type.getPrice();
+public Float calcEval(List<BoxType> bxTypes, List<Command> commandes){
+    Float eval = new Float(0);
+    for(BoxType box_type: bxTypes) {
+        eval = eval + box_type.calculateCout();
     }
-    for (Command commande : Command.find.all()) {
-        eval = eval + Math.abs(commande.getSendingTdate() - commande.getRealTdate());
+    for (Command commande : commandes) {
+        eval = eval + commande.calculateFee();
     }
     return eval;
  }

@@ -10,9 +10,10 @@ GET     /count                      controllers.CountController.count
 GET     /message                    controllers.AsyncController.message
 
 POST    /upload                     controllers.HomeController.upload
-POST    /instanceTreatment                     controllers.HomeController.instanceTreatment
+POST    /instanceTreatment          controllers.HomeController.instanceTreatment
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
 
 GET		/stats 						controllers.StatsController.stats
+
 

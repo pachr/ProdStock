@@ -165,4 +165,12 @@ public class Command extends Model {
 	public void setInstanceId(Instance instanceId) {
 		this.instanceId = instanceId;
 	}
+
+	public float calculateGap() {
+		return Math.abs(getSendingTdate()-getRealTdate());
+	}
+
+	public float calculateFee() {
+		return calculateGap()*getFee();
+	}
 }
