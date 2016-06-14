@@ -56,4 +56,86 @@ public class Pile{
 	public String toString() {
 		return "Pile [height=" + height + ", width=" + width + ", heightMax=" + heightMax + ", boxId=" + boxId + ", productTypeId=" + productTypeId + "]";
 	}
+
+
+
+	/**
+	* Returns value of height
+	* @return
+	*/
+	public Integer getHeight() {
+		return height;
+	}
+
+	/**
+	* Sets new value of height
+	* @param
+	*/
+	public void setHeight(Integer height) {
+		this.height = height;
+	}
+
+	/**
+	* Returns value of width
+	* @return
+	*/
+	public Integer getWidth() {
+		return width;
+	}
+
+	/**
+	* Sets new value of width
+	* @param
+	*/
+	public void setWidth(Integer width) {
+		this.width = width;
+	}
+
+	/**
+	* Returns value of heightMax
+	* @return
+	*/
+	public Integer getHeightMax() {
+		return heightMax;
+	}
+
+	/**
+	* Sets new value of heightMax
+	* @param
+	*/
+	public void setHeightMax(Integer heightMax) {
+		this.heightMax = heightMax;
+	}
+
+	/**
+	* Returns value of boxId
+	* @return
+	*/
+	public Integer getBoxId() {
+		return boxId;
+	}
+
+	/**
+	* Sets new value of boxId
+	* @param
+	*/
+	public void setBoxId(Integer boxId) {
+		this.boxId = boxId;
+	}
+
+	/**
+	* Returns value of productTypeId
+	* @return
+	*/
+	public Integer getProductTypeId() {
+		return productTypeId;
+	}
+
+	/**
+	* Sets new value of productTypeId
+	* @param
+	*/
+	public void setProductTypeId(Integer productTypeId) {
+		this.productTypeId = productTypeId;
+	}
 }
