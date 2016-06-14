@@ -36,4 +36,100 @@ public class Box extends Model{
 
     public static Finder<String, Box> find = new Finder<String,Box>(Box.class);
 
+
+	/**
+	* Returns value of id
+	* @return
+	*/
+	public Integer getId() {
+		return id;
+	}
+
+	/**
+	* Sets new value of id
+	* @param
+	*/
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	/**
+	* Returns value of name
+	* @return
+	*/
+	public String getName() {
+		return name;
+	}
+
+	/**
+	* Sets new value of name
+	* @param
+	*/
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	/**
+	* Returns value of boxTypeId
+	* @return
+	*/
+	public String getBoxTypeId() {
+		return boxTypeId;
+	}
+
+	/**
+	* Sets new value of boxTypeId
+	* @param
+	*/
+	public void setBoxTypeId(String boxTypeId) {
+		this.boxTypeId = boxTypeId;
+	}
+
+	/**
+	* Returns value of commandId
+	* @return
+	*/
+	public String getCommandId() {
+		return commandId;
+	}
+
+	/**
+	* Sets new value of commandId
+	* @param
+	*/
+	public void setCommandId(String commandId) {
+		this.commandId = commandId;
+	}
+
+	/**
+	* Returns value of instanceId
+	* @return
+	*/
+	public Instance getInstanceId() {
+		return instanceId;
+	}
+
+	/**
+	* Sets new value of instanceId
+	* @param
+	*/
+	public void setInstanceId(Instance instanceId) {
+		this.instanceId = instanceId;
+	}
+
+	/**
+	* Returns value of produitCollection
+	* @return
+	*/
+	public List<Product> getProduitCollection() {
+		return produitCollection;
+	}
+
+	/**
+	* Sets new value of produitCollection
+	* @param
+	*/
+	public void setProduitCollection(List<Product> produitCollection) {
+		this.produitCollection = produitCollection;
+	}
 }
