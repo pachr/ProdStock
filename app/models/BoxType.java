@@ -35,4 +35,103 @@ public class BoxType extends Model{
 
     public static Finder<String, BoxType> find = new Finder<String,BoxType>(BoxType.class);
 
+
+
+	/**
+	* Returns value of id
+	* @return
+	*/
+	public Integer getId() {
+		return id;
+	}
+
+	/**
+	* Sets new value of id
+	* @param
+	*/
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	/**
+	* Returns value of name
+	* @return
+	*/
+	public String getName() {
+		return name;
+	}
+
+	/**
+	* Sets new value of name
+	* @param
+	*/
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	/**
+	* Returns value of height
+	* @return
+	*/
+	public Integer getHeight() {
+		return height;
+	}
+
+	/**
+	* Sets new value of height
+	* @param
+	*/
+	public void setHeight(Integer height) {
+		this.height = height;
+	}
+
+	/**
+	* Returns value of width
+	* @return
+	*/
+	public Integer getWidth() {
+		return width;
+	}
+
+	/**
+	* Sets new value of width
+	* @param
+	*/
+	public void setWidth(Integer width) {
+		this.width = width;
+	}
+
+	/**
+	* Returns value of price
+	* @return
+	*/
+	public Float getPrice() {
+		return price;
+	}
+
+	/**
+	* Sets new value of price
+	* @param
+	*/
+	public void setPrice(Float price) {
+		this.price = price;
+	}
+
+	/**
+	* Returns value of instanceId
+	* @return
+	*/
+	public Instance getInstanceId() {
+		return instanceId;
+	}
+
+	/**
+	* Sets new value of instanceId
+	* @param
+	*/
+	public void setInstanceId(Instance instanceId) {
+		this.instanceId = instanceId;
+	}
+
+	
 }
