@@ -27,6 +27,10 @@ public class HomeController extends Controller {
         return ok(index.render("ProdStock Project"));
     }
 
+    public Result script() {
+      return ok("FDP");
+    }
+
     public Result upload() {
         Http.MultipartFormData<File> body = request().body().asMultipartFormData();
         Http.MultipartFormData.FilePart<File> instanceFile = body.getFile("instance-file");
