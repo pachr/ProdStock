@@ -12,6 +12,7 @@ import java.io.*;
 import java.util.*;
 
 
+
 /**
  * This controller contains an action to handle HTTP requests
  * to the application's home page.
@@ -59,7 +60,11 @@ public class HomeController extends Controller {
         List<Command> commandList = Command.find.where().ilike("INSTANCE_ID", instance_id).findList();
         List<BoxType> boxTypeList = BoxType.find.where().ilike("INSTANCE_ID", instance_id ).findList();
 
+        // Compteur pour suivre l'avancé du temps dans la production
         Integer tempsProduction = 0;
+
+        // Variable pour suivre les pénalités
+        double feeEval2 = 0;
 
          // On créé la ligne de production, pour l'instant il y en a qu'une
         ProductLine prodLine = new ProductLine();
@@ -71,8 +76,8 @@ public class HomeController extends Controller {
         // On se créé une liste de piles pour pouvoir suivre l'évolution
         List<Pile> listPile = new ArrayList();
 
-        //for(int j = 0; j < productTypeList.size(); j++){
-        for(int j = 0; j < 1 ; j++){
+        for(int j = 0; j < productTypeList.size(); j++){
+        //for(int j = 0; j < 1 ; j++){
             // On get la liste des produits d'un type
             ProductType productType = productTypeList.get(j);
             Integer productTypeId = productType.getId();
@@ -177,11 +182,69 @@ public class HomeController extends Controller {
                 p.setBoxId(productBox);
                 p.save();
 
-                // On get toutes les produits de la commande dont le champ box id est nul => Ils n'ont pas été affecté la commande n'est pas complète
-                //List<Product> productCommandList = Product.find.where().ilike("command_id", command.getId().toString()).ilike("box_id", null).findList();*/
-                //Logger.debug("fin traitement produit");
+                // on veut get le nombre de produit actuellement créé par la commande
+                // Nombre de produits dans la commande. On perd du temps a le set aussi longtemps. Il faudrait insatncier une prop dans command
+                Integer nbProductsCommand = Product.find.where().ilike("command_id", command.getId().toString()).findList().size();
+                //Logger.debug("Total : commande :" + command.getName().toString() + " nb produits :" + nbProductsCommand.toString());
+
+                //Nombre de produits actuellement créés
+                Integer nbProductsCommandCreated = Product.find.where().ilike("command_id", command.getId().toString()).isNotNull("box_id").findList().size();
+                //Logger.debug("Deja crée : commande :" + command.getName().toString() + " nb produits :" + nbProductsCommandCreated.toString());
+
+                // On teste si la commande est finie
+                if(nbProductsCommand == nbProductsCommandCreated){
+                  // Si la commande est finie on peut libérer les box de cette commande
+                  List<Box> boxToFree = Box.find.where().ilike("command_id", command.getId().toString()).findList();
+                  for (Integer n = 0; n < boxToFree.size(); n++ ){
+                    // On le libère
+                    boxToFree.get(n).setCurrentWidth(0);
+                  }
+                  // On calcule maintenant la date d'envoi prévu en ajoutant le temps de stockage du dernier produits
+                  Integer realTdate = tempsProduction + command.getMinTime();
+
+                  // On sauvegarde le résulatat obtenu dans la commande
+                  command.setRealTdate(realTdate);
+                  command.save();
+
+                  // Puis on calcule les pénalités
+                  // Pour les pénalités on doit regarder si la date d'envoie est différente de celle de la commande et ajouter la valeur absolu de la différence + le cout par unité de temps
+                  double intermediateFee = command.getFee() * Math.abs(command.getSendingTdate() - realTdate);
+                  Logger.debug("intermediate " + String.valueOf(intermediateFee));
+                  feeEval2 += intermediateFee;
+                }
               }
             }
+
+          // Calcul du eval
+          // On récupère la date finale
+          Command lastCommandSent = Command.find.where().ilike("INSTANCE_ID", instance_id).orderBy("REAL_TDATE desc").findList().get(0);
+          Integer lastRealTdate = lastCommandSent.getRealTdate();
+
+          // On récupère la liste des box achétés pour toutes les commandes
+          List<Box> allBox = Box.find.where().ilike("INSTANCE_ID", instance_id).findList();
+
+          // variable eval 1 qui va compter le prix de tous les box
+          double feeEval1 = 0;
+          for(Integer n=0; n < allBox.size(); n++){
+            double boxPrice = BoxType.find.where().ilike("ID", allBox.get(n).getBoxTypeId()).findList().get(0).getPrice();
+            feeEval1 += boxPrice;
+          }
+
+          // On ajoute les deux eval
+          double eval = feeEval1 + feeEval2 ;
+
+          Logger.debug(String.valueOf(feeEval2));
+
+
+          // On ajoute la solution dans la bdd
+          Solution sol = new Solution();
+          sol.setName("Sol Insance" + instance_id);
+          sol.setFee(((Double) feeEval2).floatValue());
+          sol.setSendingDate(lastRealTdate);
+          sol.setEvalScore(((Double) eval).floatValue());
+          sol.setInstanceId(instance);
+          sol.save();
+
           return ok("FDP");
      }
 
