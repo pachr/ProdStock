@@ -91,7 +91,7 @@ public class HomeController extends Controller {
                     cmd.setMinTime(arrayLine[1]);
                     cmd.setSendingTdate(arrayLine[2]);
                     cmd.setFee(arrayLine[3]);
-                    cmd.save()
+                    cmd.save();
 
 
                     for (i=0; i<=nbProduct; i++) {
@@ -100,7 +100,7 @@ public class HomeController extends Controller {
                       p.setName(arrayProduct[i]);
                       ProductType pt = ProductType.find.where().ilike("Instance_id", instance_id).ilike("Product_name", arrayProduct[i]).get();
                       p.setProductTypeId(pt.getId());
-                      p.setCommandId(cmd.getId())
+                      p.setCommandId(cmd.getId());
                       p.save();
                     }
                   case 3:
@@ -109,7 +109,7 @@ public class HomeController extends Controller {
                     bt.setName(arrayLine[0]);
                     bt.setHeight(arrayLine[1]);
                     bt.setWidth(arrayLine[2]);
-                    bt.setPrice(arrayLine[3])
+                    bt.setPrice(arrayLine[3]);
                     break;
                   default:
                     break;
