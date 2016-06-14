@@ -111,7 +111,7 @@ public class HomeController extends Controller {
                 BoxType boxMaxSize = BoxType.find.where().ilike("INSTANCE_ID", instance_id).orderBy("height*width desc").findList().get(1);
                 // Si il n' ya pas de box pour cette commande on en achète un
                 if(listBox.size() == 0){
-                  Logger.debug("Premier box pour la commande " + command.getName());
+                //  Logger.debug("Premier box pour la commande " + command.getName());
                   // On achète la box
                   productBox = new Box();
                   productBox.setBoxTypeId(boxMaxSize.getId().toString());
@@ -136,7 +136,7 @@ public class HomeController extends Controller {
                           productBox = Box.find.byId(listPile.get(n).getBoxId().toString());
                           endStatementFlag = true;
 
-                          Logger.debug("On a trouvé une pile de la meme commande, product type de taille" + listPile.get(n).toString());
+                        //  Logger.debug("On a trouvé une pile de la meme commande, product type de taille" + listPile.get(n).toString());
                         }
                       }
                     }
@@ -155,7 +155,7 @@ public class HomeController extends Controller {
 
                         // On met à jour la taille du box en ajoutant à la largeur, la largeur du produit
                         productBox.setCurrentWidth(productBox.getCurrentWidth() + productType.getWidth());
-                        Logger.debug("On ajoute une nouvelle pile dans un box libre de largeur" + productBox.getCurrentWidth().toString());
+                        //Logger.debug("On ajoute une nouvelle pile dans un box libre de largeur" + productBox.getCurrentWidth().toString());
                         endStatementFlag = true;
                       }
                     }
@@ -163,7 +163,7 @@ public class HomeController extends Controller {
                     // Si on est pas sorti c'est qu'on a pas trouvé de pile ni de box pour l'acceuillir
                     // On doit donc acheter un nouveau box et créer une nouvelle pile que l'on range dedans
                     if(endStatementFlag != true){
-                      Logger.debug("On a aucun box / pile on en achete un nouveau");
+                      //Logger.debug("On a aucun box / pile on en achete un nouveau");
                       // On achète la box
                       productBox = new Box();
                       productBox.setBoxTypeId(boxMaxSize.getId().toString());
@@ -209,7 +209,7 @@ public class HomeController extends Controller {
                   // Puis on calcule les pénalités
                   // Pour les pénalités on doit regarder si la date d'envoie est différente de celle de la commande et ajouter la valeur absolu de la différence + le cout par unité de temps
                   double intermediateFee = command.getFee() * Math.abs(command.getSendingTdate() - realTdate);
-                  Logger.debug("intermediate " + String.valueOf(intermediateFee));
+                  //Logger.debug("intermediate " + String.valueOf(intermediateFee));
                   feeEval2 += intermediateFee;
                 }
               }
