@@ -231,4 +231,12 @@ public class Pile extends Model{
 	public void setProductTypeId(ProductType productTypeId) {
 		this.productTypeId = productTypeId;
 	}
+
+	public Integer getProductTypeWidth(){
+		return ProductType.find.byId(this.getProductTypeId().getId().toString()).getWidth();
+	}
+
+	public Integer getProductTypeHeight(){
+		return ProductType.find.byId(this.getProductTypeId().getId().toString()).getHeight();
+	}
 }
