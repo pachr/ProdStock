@@ -44,13 +44,11 @@ create table instance (
 create table pile (
   ID                        integer(55) auto_increment not null,
   WIDTH                     integer,
+  HEIGHT                    integer,
   HEIGHT_MAX                integer,
   BOX_ID                    integer(55),
   BOX_COMMAND_ID            integer(55),
   PRODUCT_TYPE_ID           integer(55),
-  constraint uq_pile_BOX_ID unique (BOX_ID),
-  constraint uq_pile_BOX_COMMAND_ID unique (BOX_COMMAND_ID),
-  constraint uq_pile_PRODUCT_TYPE_ID unique (PRODUCT_TYPE_ID),
   constraint pk_pile primary key (ID))
 ;
 

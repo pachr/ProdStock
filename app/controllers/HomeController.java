@@ -2,7 +2,7 @@ package controllers;
 
 import models.*;
 import play.mvc.*;
-import utils.*;
+
 
 import views.html.*;
 import play.Logger;
@@ -80,7 +80,7 @@ public class HomeController extends Controller {
 
           List<Product> productList = Product.find.where().ilike("INSTANCE_ID", instance_id ).ilike("Command_id",  commandList.get(l).getId().toString()).findList();
           for (Integer m=0; m < productList.size(); m++) {
-            //manque le numero de la box achetee 
+            //manque le numero de la box achetee
             String product = commandList.get(l).getName() + " " + productList.get(m).getName() + " " +
               productList.get(m).getProductLineId().getName() + " " + productList.get(m).getStartProduction() + " " +
               productList.get(m).getBoxId().getName() + " " ;
@@ -136,18 +136,16 @@ public class HomeController extends Controller {
         }
 
 
-        // On se créé une liste de piles pour pouvoir suivre l'évolution
-        List<Pile> listPile = new ArrayList();
-
         // On boucle sur la liste des commandes
         for(int j = 0; j < commandList.size(); j++){
-        //for(int j = 1; j < 2; j++){
+        //for(int j = 0; j < 3; j++){
           // On traite la première commande, a plus urgent. On créé une liste de produits qui correspondent a cette commandes
           Command currentCommand = commandList.get(j);
 
           // On va utiliser la liste de type de produits pour boucler dessus. Cela va permettre de ne pas perdre les temps de set up
           // On garde que ceux ou il y a bien des produits
           List<ProductType> productTypeListCommand = new ArrayList();
+          List<ProductType> productTypeListCommandUtil = new ArrayList();
           // On va générer les produit type utiles, qui sont bien reliés au produit.
           // On commance par get la list des produits pour cette commandes
           List<Product> productListCommand = Product.find.where().ilike("command_id", currentCommand.getId().toString()).orderBy("PRODUCT_TYPE_ID").findList();
@@ -159,12 +157,11 @@ public class HomeController extends Controller {
 
             if(productTypeId != currentProductTypeId || s == 0){
               nbProductTypeId++;
+              productTypeListCommandUtil.add(productListCommand.get(s).getProductTypeId());
             }
 
             currentProductTypeId = productTypeId;
           }
-
-          Logger.debug("Nb product type" + nbProductTypeId.toString());
 
           // On va boucler sur la liste des product type et les réaliser avec notre nombre de lignes
           Integer i = 0;
@@ -175,35 +172,50 @@ public class HomeController extends Controller {
 
             // A l'intérieur on va boucler sur la liste des nbLigneProd pour pouvoir y créer chaque produits
             // Si on a qu'un produit a créeron ne doit pas utiliser les n lignes de production
-            if(i + nbLigneProd > productTypeList.size()){
+            //Logger.debug("i : " + i.toString());
+            //Integer d = productTypeListCommandUtil.size();
+            //Logger.debug("product type util : " + d.toString());
+            //Logger.debug("nb prod : " + nbLigneProd.toString());
+            Integer nbLigneProdFinal = 0;
+            if(i + nbLigneProd > productTypeListCommandUtil.size()){
               // Si on a besoin de moins des n lignes de prod on rétablit le bon nombre
-              nbLigneProd = productTypeList.size() - i;
+              nbLigneProdFinal = nbProductTypeId - i;
+            }
+            else{
+              nbLigneProdFinal = nbLigneProd;
             }
 
+            //Logger.debug("nbprod " + nbLigneProdFinal.toString());
             // List pour suivre les temps de traitement
             List<Integer> suiviTDate = new ArrayList();
-            for(Integer l = 0; l < nbLigneProd; l++){
+            // on boucle sur le nombre de ligne de prod
+            // nbLigneProd - 1 car on se base sur 0
+            for(Integer l = 0; l < nbLigneProdFinal; l++){
                 Integer localProductionTDate = 0;
                 // Pour un product type, on ajoute le temps de set up
-                Integer setUpTime = ProductType.find.where().ilike("ID", productTypeList.get(i + l).getId().toString() ).findList().get(0).getSetUpTime();
+                Integer setUpTime = ProductType.find.byId(productTypeList.get(i + l).getId().toString() ).getSetUpTime();
                 localProductionTDate += setUpTime;
                 // Pour chaque product type on boucle sur la liste des produits.
-                List<Product> productListProductType = Product.find.where().ilike("command_id", currentCommand.getId().toString()).ilike("PRODUCT_TYPE_ID", productTypeList.get(i + l).getId().toString() ).findList();
+                List<Product> productListProductType = Product.find.where().ilike("command_id", currentCommand.getId().toString()).ilike("PRODUCT_TYPE_ID", productTypeListCommandUtil.get(i + l).getId().toString() ).findList();
                 // On boucle sur la liste des produits correspondant a la commande et au product type
+
                 for(Integer v = 0; v < productListProductType.size(); v++){
+
                   // Boucle de la liste des produits. On va mettre à jour leur temps de traitement
                   // On ajoute le temps de productionTime
                   Product currentProduct = productListProductType.get(v);
-                  Integer productTDateProduction = ProductType.find.where().ilike("ID", currentProduct.getProductTypeId().getId().toString() ).findList().get(0).getProductionTime();
+                  Integer productTDateProduction = ProductType.find.byId(productTypeList.get(i + l).getId().toString() ).getProductionTime();
                   // On met à jour le temps de produciton par produit
                   localProductionTDate += productTDateProduction;
 
                   // On réalise ensuite l'update pour mettre à jour le start date du product et la ligne de production sur lequel le produit a été créé
+                  // Il faut mettre l-1 pour partir de l'indice 0 du tableau de lignes de production
                   currentProduct.setStartProduction(productTDateProduction.toString());
                   currentProduct.setProductLineId(listProdLine.get(l));
                   currentProduct.save();
 
-                  Logger.debug("Temps de production : " + tempsProduction);
+                //  Logger.debug("Temps de production : " + tempsProduction);
+
                   cpt++;
 
                   // On range le produit dans une box
@@ -219,11 +231,12 @@ public class HomeController extends Controller {
                   List<Box> listBox = Box.find.where().ilike("Command_id", currentCommand.getId().toString()).findList();
 
                   // Si on doit acheter un nouveau box on prendra par défaut le plus grand
-                  BoxType boxMaxSize = BoxType.find.where().ilike("INSTANCE_ID", instance_id).orderBy("height*width asc").findList().get(0);
+                  BoxType boxMaxSize = BoxType.find.where().ilike("INSTANCE_ID", instance_id).orderBy("height*width asc").findList().get(1);
+
 
 
                   if(listBox.size() == 0){
-                  //  Logger.debug("Premier box pour la commande " + command.getName());
+                    Logger.debug("Premier box pour la commande " + currentCommand.getName());
                     // On achète la box
                     productBox = new Box();
                     productBox.setBoxTypeId(boxMaxSize.getId().toString());
@@ -232,23 +245,34 @@ public class HomeController extends Controller {
                     productBox.save();
 
                     // On doit déclarer une nouvelle pile dans laquelle on assure la
-                    Pile pile = new Pile(productBox.getId(), productTypeId, currentCommand.getId(), productType.getWidth(), productType.getHeight(), boxMaxSize.getHeight());
-                    listPile.add(pile);
+                    Pile pile = new Pile();
+
+                    pile.setWidth(productType.getWidth());
+                    pile.setHeightMax(boxMaxSize.getHeight());
+                    pile.setHeight(productType.getHeight());
+                    pile.setBoxId(productBox);
+                    pile.setCommandPileId(currentCommand);
+                    pile.setProductTypeId(productType);
+
+                    pile.save();
+
                   }
                   else{
                     // On teste si il y a une pile dispo de la bonne taille pour la bonne commande et du bon type de produit
                     Boolean endStatementFlag = false;
+                    List<Pile> listPile  = Pile.find.where().ilike("BOX_COMMAND_ID", currentCommand.getId().toString()).findList();
+
                     for(Integer n = 0; n <listPile.size(); n++){
-                      if(listPile.get(n).getCommandId() == currentCommand.getId()){
+                      if(listPile.get(n).getCommandPileId() == currentCommand){
                         if(listPile.get(n).checkProductTypeId(productTypeId)){
                           if(!listPile.get(n).isPileOversized(productType.getHeight())){
                             // On ajoute dans la pile en mettant à jour sa taille
-                            listPile.get(n).addProduct(productType.getHeight());
+                            listPile.get(n).updateHeight(productType.getHeight());
                             // On retourve la box pour pouvoir l'enregistrer derrière
                             productBox = Box.find.byId(listPile.get(n).getBoxId().toString());
                             endStatementFlag = true;
 
-                          //  Logger.debug("On a trouvé une pile de la meme commande, product type de taille" + listPile.get(n).toString());
+                            Logger.debug("On a trouvé une pile de la meme commande, product type de taille" + listPile.get(n).toString());
                           }
                         }
                       }
@@ -262,8 +286,16 @@ public class HomeController extends Controller {
                         if(!listBox.get(n).isOverwidthed(productType.getWidth(), boxMaxSize.getWidth() )){
                           productBox = listBox.get(n);
                           // On se créé une nouvelle pile et l'ajoute dans la pox
-                          Pile pile = new Pile(productBox.getId(), productTypeId, currentCommand.getId(), productType.getWidth(), productType.getHeight(), boxMaxSize.getHeight());
-                          listPile.add(pile);
+                          Pile pile = new Pile();
+
+                          pile.setWidth(productType.getWidth());
+                          pile.setHeightMax(boxMaxSize.getHeight());
+                          pile.setHeight(productType.getHeight());
+                          pile.setBoxId(productBox);
+                          pile.setCommandPileId(currentCommand);
+                          pile.setProductTypeId(productType);
+
+                          pile.save();
 
                           // On met à jour la taille du box en ajoutant à la largeur, la largeur du produit
                           productBox.setCurrentWidth(productBox.getCurrentWidth() + productType.getWidth());
@@ -284,8 +316,16 @@ public class HomeController extends Controller {
                         productBox.save();
 
                         // On doit déclarer une nouvelle pile dans laquelle on assure la
-                        Pile pile = new Pile(productBox.getId(), productTypeId, currentCommand.getId(), productType.getWidth(), productType.getHeight(), boxMaxSize.getHeight());
-                        listPile.add(pile);
+                        Pile pile = new Pile();
+
+                        pile.setWidth(productType.getWidth());
+                        pile.setHeightMax(boxMaxSize.getHeight());
+                        pile.setHeight(productType.getHeight());
+                        pile.setBoxId(productBox);
+                        pile.setCommandPileId(currentCommand);
+                        pile.setProductTypeId(productType);
+
+                        pile.save();
                       }
                     }
                   }
@@ -308,7 +348,7 @@ public class HomeController extends Controller {
 
 
 
-            Logger.debug("max" + maxProductionTDate);
+            //Logger.debug("max" + maxProductionTDate);
             // Fin du product type a l'intérieur de la commande
             // Une fois les lignes de production parcourue, on met à jour le temps de production
 
@@ -323,8 +363,8 @@ public class HomeController extends Controller {
             }
 
 
-            i += nbLigneProd;
-            Logger.debug(i.toString());
+            i += nbLigneProdFinal;
+            //Logger.debug(i.toString());
             Logger.debug("Temps de production : " + tempsProduction);
           }
           // Fin de la commande

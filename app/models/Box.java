@@ -33,7 +33,7 @@ public class Box extends Model{
     @JoinColumn(name = "INSTANCE_ID", referencedColumnName = "ID")
     @ManyToOne
     private Instance instanceId;
-    @OneToOne(mappedBy="boxId")
+    @OneToMany(mappedBy="boxId")
     private Pile pile;
     @OneToMany(mappedBy = "boxId")
     private List<Product> produitCollection;
