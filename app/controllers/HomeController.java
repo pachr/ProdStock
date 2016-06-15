@@ -106,8 +106,16 @@ public class HomeController extends Controller {
         // On récupère le numéro d'instance passé en paramètre
         String instance_id = "1";
 
+
+
+
         // On get l'objet instance à partir de son id
         Instance instance = Instance.find.byId(instance_id);
+
+        // On regarde si il y a déjà une solution pour l'instance
+        if(Solution.find.where().ilike("Instance_id", instance_id).findList().size() > 0){
+          return redirect(controllers.routes.StatsController.stats());
+        }
 
         // On récupère dans des variables que l'on utilisera tout au long de l'algorithe : la liste des types de prodiots, la liste des lignes de production, les type de box
         List<ProductType> productTypeList = ProductType.find.where().ilike("Instance_id", instance_id).findList();
@@ -422,24 +430,24 @@ public class HomeController extends Controller {
                   currentProduct.save();
 
                 }
-                // on va retenir le temps le plus grand au cours des 3 productions
+                // On teste laquelle des 3 lignes de production a mis le plus de temps à s'effectuer
+                // On retient la plus longue pour le démarrage de la nouvelle sérié
+                // Si la date est plus longue la variable maxProductionTime est remplacé par le chronomètre de la production locale
                 if(localProductionTime > maxProductionTDate){
                   maxProductionTDate = localProductionTime;
                   Logger.debug(maxProductionTDate.toString());
                 }
 
-                // On ajoute le temps de production
+                // On met à jour le a durée de fonctionnement de la ligne de production pour l'utiliser après
                 suiviTDate.add(localProductionTime);
 
             }
 
 
 
-            //Logger.debug("max" + maxProductionTDate);
-            // Fin du product type a l'intérieur de la commande
-            // Une fois les lignes de production parcourue, on met à jour le temps de production
-
-
+            // Dans notre algorithme on ajoute le temps de tous les produits. Pour le parralélisme,
+            // On garde seulement le temps le plus grand (celui pendant laquelle au moins une des lignes de production était en fct)
+            // Et on retranche le temps des deux autres
             globalTime += maxProductionTDate;
 
             // on doit soustraire le temps gagné
@@ -454,19 +462,20 @@ public class HomeController extends Controller {
             //Logger.debug(i.toString());
             Logger.debug("Temps de production : " + globalTime);
           }
-          // Fin de la commande
-          // On a fini la commande on va libérér ses box
-          // Quand la commande est finie on procède au vidage des box utilisés e
+          // On a fini de traiter les produits de la commande et de les ranger dans des box.
+          // On va maintenant vider les box
+          //On trouvé la liste des box associés à la commande
           List<Box> boxToFree = Box.find.where().ilike("command_id", currentCommand.getId().toString()).findList();
           for (Integer n = 0; n < boxToFree.size(); n++ ){
             // On libère le box en mettant sa longieur à 0
             boxToFree.get(n).setCurrentWidth(0);
           }
 
-          // On met à jour la date réele de la commande
+          // On va mettre à jour la date d'expédition de la commande
+          // Pour avoir le temps on se base sur le chronomètre global de la production + le temps minimimum ou la commande doit être stocké
           Integer realTdate = globalTime + currentCommand.getMinTime();
 
-          // On regarde si on est en avance. Si oui on attendra avec les box
+          // On regarde si on est en avance. Si oui on attendra avec les box la date de livraison. cela retient plus les box mais les pénalitées d'avance coute tres cher ..
           if(realTdate < currentCommand.getSendingTdate()){
             realTdate = currentCommand.getSendingTdate();
           }
