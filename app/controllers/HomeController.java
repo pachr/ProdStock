@@ -1,5 +1,6 @@
 package controllers;
 
+import controllers.*;
 import models.*;
 import play.mvc.*;
 
@@ -40,8 +41,8 @@ public class HomeController extends Controller {
         String response = "fdp";
         //Si l'instance est nulle on reexecute le script
         if (instance == null) {
-            script();
-            visualisation("1");
+            treatment(instance_id);
+            visualisation(instance_id);
         }
 
         String name = instance.getName();
@@ -100,9 +101,9 @@ public class HomeController extends Controller {
     }
 
 
-    public Result script() {
+    public Result treatment(String instance_id){
         // Instance uploadé que l'on reçcoit en paramètre.
-        String instance_id = "1";
+        //String instance_id = instanceId;
         Instance instance = Instance.find.byId(instance_id);
         List<ProductType> productTypeList = ProductType.find.where().ilike("Instance_id", instance_id).findList();
         List<ProductLineType> productLineTypeList = ProductLineType.find.where().ilike("Instance_id", instance_id).findList();
@@ -429,7 +430,7 @@ public class HomeController extends Controller {
 
         Logger.debug(cpt.toString());
 
-        return redirect(controllers.routes.StatsController.stats());
+        return redirect(controllers.routes.StatsController.stats(instance_id));
     }
 
 
@@ -557,7 +558,7 @@ public class HomeController extends Controller {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            return ok(compteur.toString());
+            return redirect(controllers.routes.HomeController.index());
         } else {
             flash("error", "Missing file");
             return badRequest();

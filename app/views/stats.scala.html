@@ -42,7 +42,9 @@
         </tr>
         @for(commande <- commandes) {
             <tr>
-                <td>@commande.getName()</td>
+                <td>
+                    <a href="@routes.StatsController.visualize(instance.getId().toString, commande.getId().toString)" >@commande.getName()</a>
+                </td>
                 <td>@commande.getSendingTdate()</td>
                 <td>@commande.getRealTdate()</td>
                 <td>@commande.getFee()</td>
