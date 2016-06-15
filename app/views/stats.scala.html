@@ -1,0 +1,54 @@
+@(eval: Float, instance: Instance, bxTypes: List[BoxType], commandes: List[Command])
+@*
+* Call the `main` template with two arguments. The first
+* argument is a `String` with the title of the page, the second
+* argument is an `Html` object containing the body of the page.
+*@
+@main("ProdStock") {
+    @*
+    * Get an `Html` object by calling the built-in Play welcome
+    * template and passing a `String` message.
+    *@
+    <div class="page-header">
+        <h1>@instance.getName() <small>Eval <strong>@eval</strong></small></h1>
+    </div>
+
+    <table class="table table-striped">
+        <tr>
+            <th>Type de box</th>
+            <th>Prix</th>
+            <th>Box Achetées</th>
+            <th>Coût</th>
+        </tr>
+        @for(box_type <- bxTypes) {
+            <tr>
+                <td>@box_type.getName()</td>
+                <td>@box_type.getPrice()</td>
+                <td>@box_type.countAchetes()</td>
+                <td>@box_type.calculateCout()</td>
+
+            </tr>
+        }
+    </table>
+
+    <table class="table table-striped">
+        <tr>
+            <th>Nom de la commande</th>
+            <th>Envoi prévu</th>
+            <th>Envoi réel</th>
+            <th>Pénalité</th>
+            <th>Ecart</th>
+            <th>Coût</th>
+        </tr>
+        @for(commande <- commandes) {
+            <tr>
+                <td>@commande.getName()</td>
+                <td>@commande.getSendingTdate()</td>
+                <td>@commande.getRealTdate()</td>
+                <td>@commande.getFee()</td>
+                <td>@commande.calculateGap()</td>
+                <td>@commande.calculateFee()</td>
+            </tr>
+        }
+    </table>
+}
