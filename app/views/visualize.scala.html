@@ -1,4 +1,5 @@
-@(eval: Float, instance: Instance, bxTypes: List[BoxType], commandes: List[Command])
+@(instance: Instance, commande: Command, boxes: List[Box], products: List[Product], piles: List[Pile])
+@import java.lang; var cumulWidth : Integer = 0
 @*
 * Call the `main` template with two arguments. The first
 * argument is a `String` with the title of the page, the second
@@ -9,4 +10,45 @@
     * Get an `Html` object by calling the built-in Play welcome
     * template and passing a `String` message.
     *@
+    <div class="page-header">
+        <h1>@instance.getName()
+            <small>Commande <strong>@commande.getName()</strong>
+                prévue à <strong>@commande.getSendingTdate()</strong> Envoyée à <strong>@commande.getRealTdate()</strong>
+            </small>
+        </h1>
+    </div>
+    @for(box <- boxes) {
+        <div class="row">
+            <div class="col-md-12">
+                <div class="well">
+                    <div class="col-md-12">
+                        @box.getId() - @box.getBoxTypeName() - @box.getBoxTypeHeight() - @box.getBoxTypeWidth()
+                    </div>
+                    <svg width="@box.getBoxTypeWidth" height="@box.getBoxTypeHeight">
+                        <rect width="@box.getBoxTypeWidth" height="@box.getBoxTypeHeight" style="fill: rgb(128, 128, 128);
+                            stroke-width: 2;
+                            stroke: rgb(0, 0, 0)"></rect>
+                        @(cumulWidth = 0)
+                            @for(pile <- piles) {
+                                @if(pile.getBoxId().getId() == box.getId()) {
+                                    <rect x="@(cumulWidth)" y="@(box.getBoxTypeHeight - pile.getHeight)" height="@pile.getHeight" width="@pile.getWidth" style="fill: rgb(128, 0, 128);
+                                        stroke-width: 1;
+                                        stroke: rgb(0, 0, 0)">
+                                    </rect>
+                                    @for(p <- pile.getNbProduct()){
+
+                                    }
+                                    @(cumulWidth += pile.getWidth)
+                                }
+                            }
+                    </svg>
+                    @for(product <- products){
+
+                        @product.getId
+                    }
+                </div>
+            </div>
+
+        </div>
+    }
 }

@@ -89,6 +89,10 @@ public class Product extends Model {
 		this.productTypeId = productTypeId;
 	}
 
+	public String getProductTypeString(){
+		return this.productTypeId.getId().toString();
+	}
+
 	/**
 	* Returns value of startProduction
 	* @return
@@ -168,5 +172,17 @@ public class Product extends Model {
 	public void setInstanceId(Instance instanceId) {
 		this.instanceId = instanceId;
 	}
+
+	public Integer getProductTypeWidth(){
+		return ProductType.find.byId(this.getProductTypeString()).getWidth();
+	}
+
+	public Integer getProductTypeHeight(){
+		return ProductType.find.byId(this.getProductTypeString()).getHeight();
+	}
+
+	/*public String getProductTypeName(){
+		return ProductType.find.byId(this.getBoxTypeId()).getName() + "_" + getBoxNumber();
+	}*/
 
 }

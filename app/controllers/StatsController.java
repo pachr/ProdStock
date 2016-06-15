@@ -1,6 +1,6 @@
 package controllers;
 
-import models.Instance;
+import models.*;
 import play.mvc.*;
 
 import views.html.*;
@@ -9,11 +9,6 @@ import java.nio.charset.Charset;
 import java.io.*;
 import java.util.Arrays;
 import java.util.List;
-
-import models.Solution;
-import models.Command;
-import models.BoxType;
-import models.Box;
 
 public class StatsController extends Controller {
 
@@ -33,8 +28,12 @@ public class StatsController extends Controller {
     }*/
 
     public Result visualize(String instanceId, String commandId){
-
-        return ok();
+        Instance inst = Instance.find.byId(instanceId);
+        Command cmd = Command.find.byId(commandId);
+        List<Box> boxes = Box.find.where().ilike("command_id", commandId).findList();
+        List<Product> products = Product.find.where().ilike("command_id", commandId).findList();
+        List<Pile> piles = Pile.find.where().ilike("box_command_id", commandId).findList();
+        return ok(views.html.visualize.render(inst, cmd, boxes, products, piles));
     }
 
 }

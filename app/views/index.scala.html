@@ -60,24 +60,26 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-md-6">
-                <div class="panel panel-warning">
-                    <div class="panel-heading">Visualiser la solution pour une instance</div>
-                    <div class="panel-body">
-                        <div class="dropdown">
-                            <div class="form-group">
-                                <label for="sel1">Sélectionner l'instance:</label>
-                                <select class="form-control" name="instance-id" id="instances-list">
-                                    <option value="">Choisir l'instance...</option>
-                                    @for(instance <- instances) {
-                                        <option class="instance" id="@instance.getId" value="@routes.HomeController.visualisation(instance.getId().toString)">
-                                        @instance.getName()
-                                        </option>
-                                    }
-                                </select>
-                            </div>
-                            <div class="btn-group" role="group">
-                                <a class="btn btn-info" href="#" id="editBtn">Télécharger la solution</a>
+            <div class="col-md-12">
+                <div class="col-md-6">
+                    <div class="panel panel-warning">
+                        <div class="panel-heading">Visualiser la solution pour une instance</div>
+                        <div class="panel-body">
+                            <div class="dropdown">
+                                <div class="form-group">
+                                    <label for="sel1">Sélectionner l'instance:</label>
+                                    <select class="form-control" name="instance-id" id="instances-list">
+                                        <option value="">Choisir l'instance...</option>
+                                        @for(instance <- instances) {
+                                            <option class="instance" id="@instance.getId" value="@routes.HomeController.visualisation(instance.getId().toString)">
+                                            @instance.getName()
+                                            </option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="btn-group" role="group">
+                                    <a class="btn btn-info" href="#" id="editBtn">Télécharger la solution</a>
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -42,15 +42,15 @@ public class Pile extends Model{
 
     public static Finder<String, Pile> find = new Finder<String,Pile>(Pile.class);
 
+	public static Finder<String, Pile> getFind() {
+		return find;
+	}
 
+	public static void setFind(Finder<String, Pile> find) {
+		Pile.find = find;
+	}
 
-
-
-
-
-
-
-  public Boolean isPileOversized(Integer productHeight){
+	public Boolean isPileOversized(Integer productHeight){
 
 		// On teste si après l'ajout du produit on va dépasser ou non la taille de la pile
 		// On renvoie 0 si on dépasse la taille max avec le nouveau produit. 1 si on ne dépasse pas
