@@ -133,5 +133,13 @@ public class BoxType extends Model{
 		this.instanceId = instanceId;
 	}
 
+	public long countAchetes(){
+		return Box.find.where().gt("INSTANCE_ID", getInstanceId().getId()).gt("BOX_TYPE_ID", getId()).findRowCount();
+	}
+
+	public Float calculateCout(){
+		return countAchetes()*getPrice();
+	}
+
 	
 }

@@ -34,7 +34,7 @@ public class Command extends Model {
     @JoinColumn(name = "INSTANCE_ID", referencedColumnName = "ID")
     @ManyToOne
     private Instance instanceId;
-    @OneToOne(mappedBy="commandPileId")
+    @OneToMany(mappedBy="commandPileId")
     private Pile pile;
 
     public static Finder<String, Command> find = new Finder<String, Command>(Command.class);
@@ -166,5 +166,13 @@ public class Command extends Model {
 	*/
 	public void setInstanceId(Instance instanceId) {
 		this.instanceId = instanceId;
+	}
+
+	public float calculateGap() {
+		return Math.abs(getSendingTdate()-getRealTdate());
+	}
+
+	public float calculateFee() {
+		return calculateGap()*getFee();
 	}
 }
