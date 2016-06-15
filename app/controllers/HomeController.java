@@ -36,14 +36,14 @@ public class HomeController extends Controller {
         return ok(views.html.index.render("ProdStock Project", instances));
     }
 
-    public Result visualisation() {
-      String instance_id = "1";
+    public Result visualisation(String instance_id) {
+      //String instance_id = "1";
       Instance instance = Instance.find.byId(instance_id);
       String response = "fdp";
       //Si l'instance est nulle on reexecute le script
        if (instance == null) {
          script();
-         visualisation();
+         visualisation("1");
        }
 
       String name = instance.getName();
@@ -104,7 +104,7 @@ public class HomeController extends Controller {
 
     public Result script() {
      // Instance uploadé que l'on reçcoit en paramètre.
-        String instance_id = "1";
+        /*String instance_id = "1";
         Instance instance = Instance.find.byId(instance_id);
         List<ProductType> productTypeList = ProductType.find.where().ilike("Instance_id", instance_id).findList();
         List<ProductLineType> productLineTypeList = ProductLineType.find.where().ilike("Instance_id", instance_id).findList();
@@ -297,7 +297,7 @@ public class HomeController extends Controller {
           sol.setSendingDate(lastRealTdate);
           sol.setEvalScore(((Double) eval).floatValue());
           sol.setInstanceId(instance);
-          sol.save();
+          sol.save();*/
 
           return ok("FDP");
      }
