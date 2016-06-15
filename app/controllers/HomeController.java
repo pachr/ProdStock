@@ -37,12 +37,7 @@ public class HomeController extends Controller {
     public Result visualisation(String instance_id) {
         //String instance_id = "1";
         Instance instance = Instance.find.byId(instance_id);
-        String response = "fdp";
-        //Si l'instance est nulle on reexecute le script
-        if (instance == null) {
-            script();
-            visualisation("1");
-        }
+        String response = "Creation success";
 
         String name = instance.getName();
 
@@ -82,7 +77,7 @@ public class HomeController extends Controller {
                     //manque le numero de la box achetee
                     String product = commandList.get(l).getName() + " " + productList.get(m).getName() + " " +
                             productList.get(m).getProductLineId().getName() + " " + productList.get(m).getStartProduction() + " " +
-                            productList.get(m).getBoxId().getName() + " ";
+                            BoxType.find.byId(productList.get(m).getBoxId().getBoxTypeId()).getName() + " " + productList.get(m).getBoxId().getBoxNumber();
                     writer.println(product);
                 }
 
