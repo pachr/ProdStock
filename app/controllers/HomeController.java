@@ -127,7 +127,7 @@ public class HomeController extends Controller {
         List<ProductLine> listProdLine = new ArrayList<ProductLine>();
         for(Integer k = 0; k < nbLigneProd; k++){
           ProductLine prodLine = new ProductLine();
-          prodLine.setName("Product Line_" + k.toString());
+          prodLine.setName(k.toString());
           prodLine.setProductLineNumber(productLineType.getId());
           prodLine.setInstanceId(instance);
           prodLine.save();
