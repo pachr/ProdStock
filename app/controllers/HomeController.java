@@ -127,7 +127,7 @@ public class HomeController extends Controller {
         List<ProductLine> listProdLine = new ArrayList<ProductLine>();
         for(Integer k = 0; k < nbLigneProd; k++){
           ProductLine prodLine = new ProductLine();
-          prodLine.setName("Unique Product Line");
+          prodLine.setName("Product Line_" + k.toString());
           prodLine.setProductLineNumber(productLineType.getId());
           prodLine.setInstanceId(instance);
           prodLine.save();
@@ -138,7 +138,7 @@ public class HomeController extends Controller {
 
         // On boucle sur la liste des commandes
         for(int j = 0; j < commandList.size(); j++){
-        //for(int j = 0; j < 3; j++){
+        //for(int j = 0; j < 5; j++){
           // On traite la première commande, a plus urgent. On créé une liste de produits qui correspondent a cette commandes
           Command currentCommand = commandList.get(j);
 
@@ -231,7 +231,7 @@ public class HomeController extends Controller {
                   List<Box> listBox = Box.find.where().ilike("Command_id", currentCommand.getId().toString()).findList();
 
                   // Si on doit acheter un nouveau box on prendra par défaut le plus grand
-                  BoxType boxMaxSize = BoxType.find.where().ilike("INSTANCE_ID", instance_id).orderBy("height*width asc").findList().get(1);
+                  BoxType boxMaxSize = BoxType.find.where().ilike("INSTANCE_ID", instance_id).orderBy("height*width desc").findList().get(1);
 
 
 
@@ -242,7 +242,15 @@ public class HomeController extends Controller {
                     productBox.setBoxTypeId(boxMaxSize.getId().toString());
                     productBox.setCommandId(currentCommand.getId().toString());
                     productBox.setInstanceId(instance);
+
+                    // On veut savoir combien de box ont été créé de ce type la
+                    Integer nbBoxForType = Box.find.where().ilike("Command_id", currentCommand.getId().toString()).ilike("Box_type_id", boxMaxSize.getId().toString()).findList().size();
+                    productBox.setBoxNumber(nbBoxForType + 1);
+
+                    // On save la box
                     productBox.save();
+
+
 
                     // On doit déclarer une nouvelle pile dans laquelle on assure la
                     Pile pile = new Pile();
@@ -253,8 +261,11 @@ public class HomeController extends Controller {
                     pile.setBoxId(productBox);
                     pile.setCommandPileId(currentCommand);
                     pile.setProductTypeId(productType);
+                    pile.setMaxEmpilement(productType.getMaxUnit());
+                    pile.setNbProduct(1);
 
                     pile.save();
+                    Logger.debug("create pile");
 
                   }
                   else{
@@ -263,16 +274,22 @@ public class HomeController extends Controller {
                     List<Pile> listPile  = Pile.find.where().ilike("BOX_COMMAND_ID", currentCommand.getId().toString()).findList();
 
                     for(Integer n = 0; n <listPile.size(); n++){
-                      if(listPile.get(n).getCommandPileId() == currentCommand){
+                      if(listPile.get(n).getCommandPileId().getId() == currentCommand.getId()){
                         if(listPile.get(n).checkProductTypeId(productTypeId)){
                           if(!listPile.get(n).isPileOversized(productType.getHeight())){
-                            // On ajoute dans la pile en mettant à jour sa taille
-                            listPile.get(n).updateHeight(productType.getHeight());
-                            // On retourve la box pour pouvoir l'enregistrer derrière
-                            productBox = Box.find.byId(listPile.get(n).getBoxId().toString());
-                            endStatementFlag = true;
+                            if(!listPile.get(n).isOverStackingCnt()){
+                              Logger.debug("meme commade");
+                              // On ajoute dans la pile en mettant à jour sa taille
+                              listPile.get(n).updateHeight(productType.getHeight());
+                              // On met à jour le nombre d'élément empilé
+                              listPile.get(n).addProduct();
+                              // On retourve la box pour pouvoir l'enregistrer derrière
+                              productBox = Box.find.byId(listPile.get(n).getBoxId().getId().toString());
 
-                            Logger.debug("On a trouvé une pile de la meme commande, product type de taille" + listPile.get(n).toString());
+                              endStatementFlag = true;
+
+                              Logger.debug("On a trouvé une pile de la meme commande, product type de taille" + listPile.get(n).toString());
+                            }
                           }
                         }
                       }
@@ -294,41 +311,86 @@ public class HomeController extends Controller {
                           pile.setBoxId(productBox);
                           pile.setCommandPileId(currentCommand);
                           pile.setProductTypeId(productType);
+                          pile.setMaxEmpilement(productType.getMaxUnit());
+                          pile.setNbProduct(1);
 
                           pile.save();
 
+                          Logger.debug("create pile");
+
                           // On met à jour la taille du box en ajoutant à la largeur, la largeur du produit
                           productBox.setCurrentWidth(productBox.getCurrentWidth() + productType.getWidth());
-                          //Logger.debug("On ajoute une nouvelle pile dans un box libre de largeur" + productBox.getCurrentWidth().toString());
+                          Logger.debug("On ajoute une nouvelle pile dans un box libre de largeur" + productBox.getCurrentWidth().toString());
                           endStatementFlag = true;
                         }
                       }
-
                       // Si on est pas sorti c'est qu'on a pas trouvé de pile ni de box pour l'acceuillir
                       // On doit donc acheter un nouveau box et créer une nouvelle pile que l'on range dedans
                       if(endStatementFlag != true){
-                        //Logger.debug("On a aucun box / pile on en achete un nouveau");
-                        // On achète la box
-                        productBox = new Box();
-                        productBox.setBoxTypeId(boxMaxSize.getId().toString());
-                        productBox.setCommandId(currentCommand.getId().toString());
-                        productBox.setInstanceId(instance);
-                        productBox.save();
+                        // On teste si un box est libre
+                        for(Integer n = 0; n < listBox.size(); n++){
+                          if(listBox.get(n).getCurrentWidth() == 0){
+                            // Alors on peut utiliser ce box
+                            Logger.debug("Recyclage de box");
 
-                        // On doit déclarer une nouvelle pile dans laquelle on assure la
-                        Pile pile = new Pile();
+                            productBox = listBox.get(n);
+                            // On se créé une nouvelle pile et l'ajoute dans la pox
+                            Pile pile = new Pile();
 
-                        pile.setWidth(productType.getWidth());
-                        pile.setHeightMax(boxMaxSize.getHeight());
-                        pile.setHeight(productType.getHeight());
-                        pile.setBoxId(productBox);
-                        pile.setCommandPileId(currentCommand);
-                        pile.setProductTypeId(productType);
+                            pile.setWidth(productType.getWidth());
+                            pile.setHeightMax(boxMaxSize.getHeight());
+                            pile.setHeight(productType.getHeight());
+                            pile.setBoxId(productBox);
+                            pile.setCommandPileId(currentCommand);
+                            pile.setProductTypeId(productType);
+                            pile.setMaxEmpilement(productType.getMaxUnit());
+                            pile.setNbProduct(1);
 
-                        pile.save();
+                            pile.save();
+
+                            // On met à jour la taille du box en ajoutant à la largeur, la largeur du produit
+                            productBox.setCurrentWidth(productBox.getCurrentWidth() + productType.getWidth());
+
+                            endStatementFlag = true;
+                          }
+
+                        }
+
+                        if(endStatementFlag != true){
+                          Logger.debug("On a aucun box / pile on en achete un nouveau");
+                          // On achète la box
+                          productBox = new Box();
+                          productBox.setBoxTypeId(boxMaxSize.getId().toString());
+                          productBox.setCommandId(currentCommand.getId().toString());
+                          productBox.setInstanceId(instance);
+
+                          // On met à jour le nombre de box de ce type pour une commande donnée
+                          Integer nbBoxForType = Box.find.where().ilike("Command_id", currentCommand.getId().toString()).ilike("Box_type_id", boxMaxSize.getId().toString()).findList().size();
+                          Logger.debug(nbBoxForType.toString());
+                          productBox.setBoxNumber(nbBoxForType + 1);
+
+                          // On save
+                          productBox.save();
+
+                          // On doit déclarer une nouvelle pile dans laquelle on assure la
+                          Pile pile = new Pile();
+
+                          pile.setWidth(productType.getWidth());
+                          pile.setHeightMax(boxMaxSize.getHeight());
+                          pile.setHeight(productType.getHeight());
+                          pile.setBoxId(productBox);
+                          pile.setCommandPileId(currentCommand);
+                          pile.setProductTypeId(productType);
+                          pile.setMaxEmpilement(productType.getMaxUnit());
+                          pile.setNbProduct(1);
+
+                          pile.save();
+
+                          Logger.debug("create pile");
                       }
                     }
                   }
+                 }
                   // On a placé trouvé une nouvelle box / pile et mis à jour leurs états
                   // On va donc maintenant mettre à jour en base le produit et le box associé
                   currentProduct.setBoxId(productBox);
