@@ -59,6 +59,10 @@ public class Box extends Model{
     }
   }
 
+  public List<Product> getBoxProduct() {
+    return Product.find.where().ilike("INSTANCE_ID", Integer.toString(this.getInstanceId().getId())).ilike("Box_id", Integer.toString(this.getId())).orderBy("Start_Production asc").findList();
+  }
+
 
 	/**
 	* Returns value of id

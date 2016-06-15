@@ -1,4 +1,4 @@
-@(eval: Float, instance: Instance, bxTypes: List[BoxType], commandes: List[Command])
+@(eval: Float, instance: Instance, bxTypes: List[BoxType], commandes: List[Command], plList: List[ProductLine], boxList: List[Box])
 @*
 * Call the `main` template with two arguments. The first
 * argument is a `String` with the title of the page, the second
@@ -54,3 +54,100 @@
         }
     </table>
 }
+
+<style media="screen">
+  #chartdiv {
+    width		: 100%;
+    height		: 1044px;
+    font-size	: 11px;
+  }
+</style>
+
+<div id="chartdiv"></div>
+<div id="chartdiv2"></div>
+<script>
+
+AmCharts.useUTC = true;
+
+var chart = AmCharts.makeChart( "chartdiv", {
+    "type": "gantt",
+    "theme": "light",
+    "marginRight": 70,
+    "period": "hh",
+    "dataDateFormat":"DD",
+    "balloonDateFormat": "JJ:NN",
+    "columnWidth": 0.5,
+    "valueAxis": {
+        "type": "date",
+        "minimum": 0,
+        "maximum": 100
+    },
+    "brightnessStep": 10,
+    "graph": {
+        "fillAlphas": 1,
+        "balloonText": "<b>[[task]]</b>: [[open]] [[value]]"
+    },
+    "rotate": true,
+    "categoryField": "category",
+    "segmentsField": "segments",
+    "colorField": "color",
+    "startDate": "2015-01-01",
+    "startField": "start",
+    "endField": "end",
+    "durationField": "duration",
+    "dataProvider": [
+    @for(pl <- plList) {
+      {
+      "category": "Line @pl.getName()",
+      "segments": [
+      @for( product <- pl.getProduct()) {
+        {
+          @if(product == pl.getProduct().get(0)) {
+            "start": @product.getStartProduction(),
+          }
+          "duration": @product.getProductionTime(),
+          "color": "#46615e",
+          "task": "@product.getName()"
+        },
+      }
+      ],
+    },
+    }
+    @for(box <- boxList) {
+      {
+      "category": "@box.getName()",
+      "segments": [
+      @for( product <- box.getBoxProduct()) {
+        {
+          @if(product == box.getBoxProduct().get(0)) {
+            "start": @product.getStartProduction(),
+          }
+          "duration": @product.getProductionTime(),
+          "color": "#46615e",
+          "task": "@product.getName()"
+        },
+      }
+      ],
+    },
+    }
+    ],
+
+
+    "valueScrollbar": {
+        "autoGridCount":true
+    },
+    "chartCursor": {
+        "cursorColor":"#55bb76",
+        "valueBalloonsEnabled": false,
+        "cursorAlpha": 0,
+        "valueLineAlpha":0.5,
+        "valueLineBalloonEnabled": true,
+        "valueLineEnabled": true,
+        "zoomable":false,
+        "valueZoomable":true
+    },
+    "export": {
+        "enabled": true
+     }
+   });
+</script>
