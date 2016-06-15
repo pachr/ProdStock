@@ -22,6 +22,8 @@ public class Box extends Model{
     private Integer id;
     @Column(name = "NAME")
     private String name;
+    @Column(name = "BOX_NUMBER")
+    private Integer boxNumber;
     @JoinColumn(name = "BOX_TYPE_ID", referencedColumnName = "ID")
     @ManyToOne
     private String boxTypeId;
@@ -31,6 +33,8 @@ public class Box extends Model{
     @JoinColumn(name = "INSTANCE_ID", referencedColumnName = "ID")
     @ManyToOne
     private Instance instanceId;
+    @OneToOne(mappedBy="boxId")
+    private Pile pile;
     @OneToMany(mappedBy = "boxId")
     private List<Product> produitCollection;
 
