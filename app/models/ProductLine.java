@@ -56,6 +56,12 @@ public class ProductLine extends Model {
 		return name;
 	}
 
+
+
+  public List<Product> getProduct() {
+    return Product.find.where().ilike("Product_line_id", Integer.toString(this.getId())).orderBy("Start_Production asc").findList();
+  }
+
 	/**
 	* Sets new value of name
 	* @param
