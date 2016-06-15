@@ -46,10 +46,10 @@ create table pile (
   WIDTH                     integer,
   HEIGHT_MAX                integer,
   BOX_ID                    integer(55),
-  COMMAND_ID                integer(55),
+  BOX_COMMAND_ID            integer(55),
   PRODUCT_TYPE_ID           integer(55),
   constraint uq_pile_BOX_ID unique (BOX_ID),
-  constraint uq_pile_COMMAND_ID unique (COMMAND_ID),
+  constraint uq_pile_BOX_COMMAND_ID unique (BOX_COMMAND_ID),
   constraint uq_pile_PRODUCT_TYPE_ID unique (PRODUCT_TYPE_ID),
   constraint pk_pile primary key (ID))
 ;
@@ -111,8 +111,8 @@ alter table command add constraint fk_command_instanceId_3 foreign key (INSTANCE
 create index ix_command_instanceId_3 on command (INSTANCE_ID);
 alter table pile add constraint fk_pile_boxId_4 foreign key (BOX_ID) references box (ID) on delete restrict on update restrict;
 create index ix_pile_boxId_4 on pile (BOX_ID);
-alter table pile add constraint fk_pile_commandId_5 foreign key (COMMAND_ID) references command (ID) on delete restrict on update restrict;
-create index ix_pile_commandId_5 on pile (COMMAND_ID);
+alter table pile add constraint fk_pile_commandPileId_5 foreign key (BOX_COMMAND_ID) references command (ID) on delete restrict on update restrict;
+create index ix_pile_commandPileId_5 on pile (BOX_COMMAND_ID);
 alter table pile add constraint fk_pile_productTypeId_6 foreign key (PRODUCT_TYPE_ID) references product_type (ID) on delete restrict on update restrict;
 create index ix_pile_productTypeId_6 on pile (PRODUCT_TYPE_ID);
 alter table product add constraint fk_product_productTypeId_7 foreign key (PRODUCT_TYPE_ID) references product_type (ID) on delete restrict on update restrict;

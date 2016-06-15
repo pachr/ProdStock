@@ -27,9 +27,9 @@ public class Pile extends Model{
     @JoinColumn(name = "BOX_ID", referencedColumnName = "ID")
     @OneToOne
     private Box boxId;
-    @JoinColumn(name = "COMMAND_ID", referencedColumnName = "ID")
+    @JoinColumn(name = "BOX_COMMAND_ID", referencedColumnName = "ID")
     @OneToOne
-    private Command commandId;
+    private Command commandPileId;
     @JoinColumn(name = "PRODUCT_TYPE_ID", referencedColumnName = "ID")
     @OneToOne
     private ProductType productTypeId;
