@@ -46,6 +46,20 @@ public class Box extends Model{
 
 
 
+
+
+
+  public Boolean isOverwidthed(Integer productWidth, Integer boxMaxWidth){
+    if(this.currentWidth + productWidth > boxMaxWidth){
+      // On dépasse
+      return true;
+    }
+    else{
+      return false;
+    }
+  }
+
+
 	/**
 	* Returns value of id
 	* @return
@@ -76,6 +90,22 @@ public class Box extends Model{
 	*/
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	/**
+	* Returns value of boxNumber
+	* @return
+	*/
+	public Integer getBoxNumber() {
+		return boxNumber;
+	}
+
+	/**
+	* Sets new value of boxNumber
+	* @param
+	*/
+	public void setBoxNumber(Integer boxNumber) {
+		this.boxNumber = boxNumber;
 	}
 
 	/**
@@ -127,6 +157,22 @@ public class Box extends Model{
 	}
 
 	/**
+	* Returns value of pile
+	* @return
+	*/
+	public Pile getPile() {
+		return pile;
+	}
+
+	/**
+	* Sets new value of pile
+	* @param
+	*/
+	public void setPile(Pile pile) {
+		this.pile = pile;
+	}
+
+	/**
 	* Returns value of produitCollection
 	* @return
 	*/
@@ -143,10 +189,11 @@ public class Box extends Model{
 	}
 
 	/**
-	* Returns value of currentWidth
+	* Returns value of g
 	* @return
 	*/
-	public Integer getCurrentWidth() {
+
+	public static Integer getCurrentWidth() {
 		return currentWidth;
 	}
 
@@ -154,19 +201,7 @@ public class Box extends Model{
 	* Sets new value of currentWidth
 	* @param
 	*/
-	public void setCurrentWidth(Integer currentWidth) {
-		this.currentWidth = currentWidth;
+	public static void setCurrentWidth(Integer currentWidth) {
+		Box.currentWidth = currentWidth;
 	}
-
-
-  public Boolean isOverwidthed(Integer productWidth, Integer boxMaxWidth){
-    if(this.currentWidth + productWidth > boxMaxWidth){
-      // On dépasse
-      return true;
-    }
-    else{
-      return false;
-    }
-  }
-
 }

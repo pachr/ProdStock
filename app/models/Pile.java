@@ -24,6 +24,10 @@ public class Pile extends Model{
     private Integer width;
     @Column(name = "HEIGHT")
     private Integer height;
+    @Column(name = "MAX_EMPIL")
+    private Integer maxEmpilement;
+    @Column(name = "NB_PRODUCT")
+    private Integer nbProduct;
     @Column(name = "HEIGHT_MAX")
     private Integer heightMax;
     @JoinColumn(name = "BOX_ID", referencedColumnName = "ID")
@@ -40,6 +44,46 @@ public class Pile extends Model{
 
 
 
+
+
+
+
+
+
+  public Boolean isPileOversized(Integer productHeight){
+
+		// On teste si après l'ajout du produit on va dépasser ou non la taille de la pile
+		// On renvoie 0 si on dépasse la taille max avec le nouveau produit. 1 si on ne dépasse pas
+		if(this.height + productHeight > this.heightMax){
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+
+	public boolean checkProductTypeId(Integer productTypeId){
+		if(this.productTypeId.getId() == productTypeId){
+			return true;
+		}
+		else{return false;}
+
+	}
+
+  public void updateHeight(Integer productHeight){
+		this.height = this.height + productHeight;
+	}
+
+  public Boolean isOverStackingCnt(){
+    if(this.nbProduct + 1 > this.maxEmpilement){
+      return true;
+    }
+    else{return false;}
+  }
+
+  public void addProduct(){
+    this.nbProduct++;
+  }
 
 
 
@@ -90,6 +134,38 @@ public class Pile extends Model{
 	*/
 	public void setHeight(Integer height) {
 		this.height = height;
+	}
+
+	/**
+	* Returns value of maxEmpilement
+	* @return
+	*/
+	public Integer getMaxEmpilement() {
+		return maxEmpilement;
+	}
+
+	/**
+	* Sets new value of maxEmpilement
+	* @param
+	*/
+	public void setMaxEmpilement(Integer maxEmpilement) {
+		this.maxEmpilement = maxEmpilement;
+	}
+
+	/**
+	* Returns value of nbProduct
+	* @return
+	*/
+	public Integer getNbProduct() {
+		return nbProduct;
+	}
+
+	/**
+	* Sets new value of nbProduct
+	* @param
+	*/
+	public void setNbProduct(Integer nbProduct) {
+		this.nbProduct = nbProduct;
 	}
 
 	/**
@@ -155,32 +231,4 @@ public class Pile extends Model{
 	public void setProductTypeId(ProductType productTypeId) {
 		this.productTypeId = productTypeId;
 	}
-
-
-  public Boolean isPileOversized(Integer productHeight){
-
-		// On teste si après l'ajout du produit on va dépasser ou non la taille de la pile
-		// On renvoie 0 si on dépasse la taille max avec le nouveau produit. 1 si on ne dépasse pas
-		if(this.height + productHeight > this.heightMax){
-			return true;
-		}
-		else{
-			return false;
-		}
-	}
-
-	public boolean checkProductTypeId(Integer productTypeId){
-		if(this.productTypeId.getId() == productTypeId){
-			return true;
-		}
-		else{return false;}
-
-	}
-
-  public void updateHeight(Integer productHeight){
-		this.height = this.height + productHeight;
-	}
-
-
-
 }
