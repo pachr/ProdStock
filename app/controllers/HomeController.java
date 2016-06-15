@@ -67,36 +67,287 @@ public class HomeController extends Controller {
         // Variable pour suivre les pénalités
         double feeEval2 = 0;
 
-         // On créé la ligne de production, pour l'instant il y en a qu'une
-        ProductLine prodLine = new ProductLine();
-        prodLine.setName("Unique Product Line");
-        prodLine.setProductLineNumber(productLineType.getId());
-        prodLine.setInstanceId(instance);
-        prodLine.save();
+        Integer cpt = 0;
+
+         // On get le nombre de ligne de production a créer
+        Integer nbLigneProd = ProductLineType.find.where().ilike("INSTANCE_ID", instance_id ).findList().get(0).getProductLineNumber();
+        // on se fait une liste de prodLine
+        List<ProductLine> listProdLine = new ArrayList<ProductLine>();
+        for(Integer k = 0; k < nbLigneProd; k++){
+          ProductLine prodLine = new ProductLine();
+          prodLine.setName("Unique Product Line");
+          prodLine.setProductLineNumber(productLineType.getId());
+          prodLine.setInstanceId(instance);
+          prodLine.save();
+
+          listProdLine.add(prodLine);
+        }
+
 
         // On se créé une liste de piles pour pouvoir suivre l'évolution
         List<Pile> listPile = new ArrayList();
 
         // On boucle sur la liste des commandes
         for(int j = 0; j < commandList.size(); j++){
-        //for(int j = 0; j < 2; j++){
+        //for(int j = 1; j < 2; j++){
           // On traite la première commande, a plus urgent. On créé une liste de produits qui correspondent a cette commandes
           Command currentCommand = commandList.get(j);
-          List<Product> productList = Product.find.where().ilike("command_id", currentCommand.getId().toString()).findList();
 
-          // Tous les produits sont rangé a la suite selon leur produit type, on peut donc commencer a produire
-          // On va maintenant le produire
-          // On incrémente du temps de setup
-          Integer productTypeId = 0;
-          for(Integer i = 0; i < productList.size();i++){
+          // On va utiliser la liste de type de produits pour boucler dessus. Cela va permettre de ne pas perdre les temps de set up
+          // On garde que ceux ou il y a bien des produits
+          List<ProductType> productTypeListCommand = new ArrayList();
+          // On va générer les produit type utiles, qui sont bien reliés au produit.
+          // On commance par get la list des produits pour cette commandes
+          List<Product> productListCommand = Product.find.where().ilike("command_id", currentCommand.getId().toString()).orderBy("PRODUCT_TYPE_ID").findList();
+
+          Integer currentProductTypeId = 0;
+          Integer nbProductTypeId = 0;
+          for(Integer s = 0; s < productListCommand.size(); s++){
+            Integer productTypeId = productListCommand.get(s).getProductTypeId().getId();
+
+            if(productTypeId != currentProductTypeId || s == 0){
+              nbProductTypeId++;
+            }
+
+            currentProductTypeId = productTypeId;
+          }
+
+          Logger.debug("Nb product type" + nbProductTypeId.toString());
+
+          // On va boucler sur la liste des product type et les réaliser avec notre nombre de lignes
+          Integer i = 0;
+          // On boucle sur la liste de product type en prenant comme pas le nombre de ligne de productionTime
+          while(i < nbProductTypeId){
+            // On se set une variable pour retenir le temps de la ligne de production la plus longue
+            Integer maxProductionTDate = 0;
+
+            // A l'intérieur on va boucler sur la liste des nbLigneProd pour pouvoir y créer chaque produits
+            // Si on a qu'un produit a créeron ne doit pas utiliser les n lignes de production
+            if(i + nbLigneProd > productTypeList.size()){
+              // Si on a besoin de moins des n lignes de prod on rétablit le bon nombre
+              nbLigneProd = productTypeList.size() - i;
+            }
+
+            // List pour suivre les temps de traitement
+            List<Integer> suiviTDate = new ArrayList();
+            for(Integer l = 0; l < nbLigneProd; l++){
+                Integer localProductionTDate = 0;
+                // Pour un product type, on ajoute le temps de set up
+                Integer setUpTime = ProductType.find.where().ilike("ID", productTypeList.get(i + l).getId().toString() ).findList().get(0).getSetUpTime();
+                localProductionTDate += setUpTime;
+                // Pour chaque product type on boucle sur la liste des produits.
+                List<Product> productListProductType = Product.find.where().ilike("command_id", currentCommand.getId().toString()).ilike("PRODUCT_TYPE_ID", productTypeList.get(i + l).getId().toString() ).findList();
+                // On boucle sur la liste des produits correspondant a la commande et au product type
+                for(Integer v = 0; v < productListProductType.size(); v++){
+                  // Boucle de la liste des produits. On va mettre à jour leur temps de traitement
+                  // On ajoute le temps de productionTime
+                  Product currentProduct = productListProductType.get(v);
+                  Integer productTDateProduction = ProductType.find.where().ilike("ID", currentProduct.getProductTypeId().getId().toString() ).findList().get(0).getProductionTime();
+                  // On met à jour le temps de produciton par produit
+                  localProductionTDate += productTDateProduction;
+
+                  // On réalise ensuite l'update pour mettre à jour le start date du product et la ligne de production sur lequel le produit a été créé
+                  currentProduct.setStartProduction(productTDateProduction.toString());
+                  currentProduct.setProductLineId(listProdLine.get(l));
+                  currentProduct.save();
+
+                  Logger.debug("Temps de production : " + tempsProduction);
+                  cpt++;
+
+                  // On range le produit dans une box
+
+                  // variable qui reccuillera la valeure de la boxTypeId
+                  Box productBox = new Box();
+
+                  // Product type id
+                  Integer productTypeId = currentProduct.getProductTypeId().getId();
+                  ProductType productType = ProductType.find.byId(productTypeId.toString());
+
+                  // On récupère la liste des box
+                  List<Box> listBox = Box.find.where().ilike("Command_id", currentCommand.getId().toString()).findList();
+
+                  // Si on doit acheter un nouveau box on prendra par défaut le plus grand
+                  BoxType boxMaxSize = BoxType.find.where().ilike("INSTANCE_ID", instance_id).orderBy("height*width asc").findList().get(0);
+
+
+                  if(listBox.size() == 0){
+                  //  Logger.debug("Premier box pour la commande " + command.getName());
+                    // On achète la box
+                    productBox = new Box();
+                    productBox.setBoxTypeId(boxMaxSize.getId().toString());
+                    productBox.setCommandId(currentCommand.getId().toString());
+                    productBox.setInstanceId(instance);
+                    productBox.save();
+
+                    // On doit déclarer une nouvelle pile dans laquelle on assure la
+                    Pile pile = new Pile(productBox.getId(), productTypeId, currentCommand.getId(), productType.getWidth(), productType.getHeight(), boxMaxSize.getHeight());
+                    listPile.add(pile);
+                  }
+                  else{
+                    // On teste si il y a une pile dispo de la bonne taille pour la bonne commande et du bon type de produit
+                    Boolean endStatementFlag = false;
+                    for(Integer n = 0; n <listPile.size(); n++){
+                      if(listPile.get(n).getCommandId() == currentCommand.getId()){
+                        if(listPile.get(n).checkProductTypeId(productTypeId)){
+                          if(!listPile.get(n).isPileOversized(productType.getHeight())){
+                            // On ajoute dans la pile en mettant à jour sa taille
+                            listPile.get(n).addProduct(productType.getHeight());
+                            // On retourve la box pour pouvoir l'enregistrer derrière
+                            productBox = Box.find.byId(listPile.get(n).getBoxId().toString());
+                            endStatementFlag = true;
+
+                          //  Logger.debug("On a trouvé une pile de la meme commande, product type de taille" + listPile.get(n).toString());
+                          }
+                        }
+                      }
+                    }
+
+                    // On a pas trouvé de pile pouvant être accueillir
+                    // On va donc chercher un box de libre et voir si on peut y ajouter une pile
+                    if(endStatementFlag != true){
+                      // On parcout la liste des box
+                      for(Integer n = 0; n < listBox.size(); n++){
+                        if(!listBox.get(n).isOverwidthed(productType.getWidth(), boxMaxSize.getWidth() )){
+                          productBox = listBox.get(n);
+                          // On se créé une nouvelle pile et l'ajoute dans la pox
+                          Pile pile = new Pile(productBox.getId(), productTypeId, currentCommand.getId(), productType.getWidth(), productType.getHeight(), boxMaxSize.getHeight());
+                          listPile.add(pile);
+
+                          // On met à jour la taille du box en ajoutant à la largeur, la largeur du produit
+                          productBox.setCurrentWidth(productBox.getCurrentWidth() + productType.getWidth());
+                          //Logger.debug("On ajoute une nouvelle pile dans un box libre de largeur" + productBox.getCurrentWidth().toString());
+                          endStatementFlag = true;
+                        }
+                      }
+
+                      // Si on est pas sorti c'est qu'on a pas trouvé de pile ni de box pour l'acceuillir
+                      // On doit donc acheter un nouveau box et créer une nouvelle pile que l'on range dedans
+                      if(endStatementFlag != true){
+                        //Logger.debug("On a aucun box / pile on en achete un nouveau");
+                        // On achète la box
+                        productBox = new Box();
+                        productBox.setBoxTypeId(boxMaxSize.getId().toString());
+                        productBox.setCommandId(currentCommand.getId().toString());
+                        productBox.setInstanceId(instance);
+                        productBox.save();
+
+                        // On doit déclarer une nouvelle pile dans laquelle on assure la
+                        Pile pile = new Pile(productBox.getId(), productTypeId, currentCommand.getId(), productType.getWidth(), productType.getHeight(), boxMaxSize.getHeight());
+                        listPile.add(pile);
+                      }
+                    }
+                  }
+                  // On a placé trouvé une nouvelle box / pile et mis à jour leurs états
+                  // On va donc maintenant mettre à jour en base le produit et le box associé
+                  currentProduct.setBoxId(productBox);
+                  currentProduct.save();
+
+                }
+                // on va retenir le temps le plus grand au cours des 3 productions
+                if(localProductionTDate > maxProductionTDate){
+                  maxProductionTDate = localProductionTDate;
+                  Logger.debug(maxProductionTDate.toString());
+                }
+
+                // On ajoute le temps de production
+                suiviTDate.add(localProductionTDate);
+
+            }
+
+
+
+            Logger.debug("max" + maxProductionTDate);
+            // Fin du product type a l'intérieur de la commande
+            // Une fois les lignes de production parcourue, on met à jour le temps de production
+
+
+            tempsProduction += maxProductionTDate;
+
+            // on doit soustraire le temps gagné
+            for(Integer a = 0; a < suiviTDate.size(); a++){
+              if(suiviTDate.get(a) != maxProductionTDate){
+                tempsProduction -= suiviTDate.get(a);
+              }
+            }
+
+
+            i += nbLigneProd;
+            Logger.debug(i.toString());
+            Logger.debug("Temps de production : " + tempsProduction);
+          }
+          // Fin de la commande
+          // On a fini la commande on va libérér ses box
+          // Quand la commande est finie on procède au vidage des box utilisés e
+          List<Box> boxToFree = Box.find.where().ilike("command_id", currentCommand.getId().toString()).findList();
+          for (Integer n = 0; n < boxToFree.size(); n++ ){
+            // On libère le box en mettant sa longieur à 0
+            boxToFree.get(n).setCurrentWidth(0);
+          }
+
+          // On met à jour la date réele de la commande
+          Integer realTdate = tempsProduction + currentCommand.getMinTime();
+
+          // On regarde si on est en avance. Si oui on attendra avec les box
+          if(realTdate < currentCommand.getSendingTdate()){
+            realTdate = currentCommand.getSendingTdate();
+          }
+
+          // On sauvegarde le résulatat obtenu dans la commande
+          currentCommand.setRealTdate(realTdate);
+          currentCommand.save();
+
+          // Puis on calcule les pénalités
+          // Pour les pénalités on doit regarder si la date d'envoie est différente de celle de la commande et ajouter la valeur absolu de la différence + le cout par unité de temps
+          double intermediateFee = currentCommand.getFee() * Math.abs(currentCommand.getSendingTdate() - realTdate);
+          //Logger.debug("intermediate " + String.valueOf(intermediateFee));
+          feeEval2 += intermediateFee;
+
+
+          Logger.debug("One command added. Time : " + currentCommand.getName().toString());
+        }
+
+        // Calcul du eval
+        // On récupère la date finale
+        Command lastCommandSent = Command.find.where().ilike("INSTANCE_ID", instance_id).orderBy("REAL_TDATE desc").findList().get(0);
+        Integer lastRealTdate = lastCommandSent.getRealTdate();
+
+        // On récupère la liste des box achétés pour toutes les commandes
+        List<Box> allBox = Box.find.where().ilike("INSTANCE_ID", instance_id).findList();
+
+        // variable eval 1 qui va compter le prix de tous les box
+        double feeEval1 = 0;
+        for(Integer n=0; n < allBox.size(); n++){
+          double boxPrice = BoxType.find.where().ilike("ID", allBox.get(n).getBoxTypeId()).findList().get(0).getPrice();
+          feeEval1 += boxPrice;
+        }
+
+        // On ajoute les deux eval
+        double eval = feeEval1 + feeEval2 ;
+
+        Logger.debug(String.valueOf(feeEval2));
+
+
+        // On ajoute la solution dans la bdd
+        Solution sol = new Solution();
+        sol.setName("Sol Insance" + instance_id);
+        sol.setFee(((Double) feeEval2).floatValue());
+        sol.setSendingDate(lastRealTdate);
+        sol.setEvalScore(((Double) eval).floatValue());
+        sol.setInstanceId(instance);
+        sol.save();
+
+        Logger.debug(cpt.toString());
+
+       return ok("FDP");
+
+/*
               Product currentProduct = productList.get(i);
               // On test si c'est la premier fois que l'on produit ce type pour rajouter le temps de set up
               if(currentProduct.getProductTypeId().getId() != productTypeId || productTypeId == 0){
-                // On récupère le temps de set up
-                Integer setUpTime = ProductType.find.where().ilike("ID", currentProduct.getProductTypeId().getId().toString() ).findList().get(0).getSetUpTime();
+
+                // Premier passege, on set les n temps de set up pour chaque pro
+                Integer setUpTime = ProductType.find.where().ilike("ID", productList.get(i).getProductTypeId().getId().toString() ).findList().get(0).getSetUpTime();
                 tempsProduction += setUpTime;
-
-
               }
               // On ajoute le temps de productionTime
               Integer productTDateProduction = ProductType.find.where().ilike("ID", currentProduct.getProductTypeId().getId().toString() ).findList().get(0).getProductionTime();
