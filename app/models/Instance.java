@@ -205,4 +205,13 @@ public class Instance extends Model {
 
 
 
+
+	/**
+	* Create string representation of Instance for printing
+	* @return
+	*/
+	@Override
+	public String toString() {
+		return "Instance [id=" + id + ", name=" + name + ", produitCollection=" + produitCollection + ", commandeCollection=" + commandeCollection + ", productLineCollection=" + productLineCollection + ", boxCollection=" + boxCollection + ", solutionCollection=" + solutionCollection + ", boxTypeCollection=" + boxTypeCollection + ", productLineTypeCollection=" + productLineTypeCollection + ", productTypeCollection=" + productTypeCollection + "]";
+	}
 }
