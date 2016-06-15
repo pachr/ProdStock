@@ -14,6 +14,9 @@ import java.util.*;
 import play.data.DynamicForm;
 import play.data.Form;
 
+import java.io.FileOutputStream;
+import java.io.FileNotFoundException;
+
 
 
 /**
@@ -34,7 +37,68 @@ public class HomeController extends Controller {
     }
 
     public Result visualisation() {
-      
+      String instance_id = "1";
+      Instance instance = Instance.find.byId(instance_id);
+      String response = "fdp";
+      //Si l'instance est nulle on reexecute le script
+       if (instance == null) {
+         script();
+         visualisation();
+       }
+
+      String name = instance.getName();
+
+      try {
+        PrintWriter writer = new PrintWriter(name.replace(".txt", ".sol") , "UTF-8");
+
+        Solution sol = Solution.find.where().ilike("Instance_id", instance_id).findList().get(0);
+        writer.println(sol.getEvalScore());
+        writer.println("");
+        List<BoxType> bxtList = BoxType.find.where().ilike("INSTANCE_ID", instance_id ).findList();
+        List<Box> boxList = Box.find.where().ilike("INSTANCE_ID", instance_id ).findList();
+
+        for (Integer j=0; j < bxtList.size(); j++) {
+          Integer compteur = 0;
+          for (Integer i=0; i < boxList.size(); i++) {
+            if (bxtList.get(j).getName().equals(boxList.get(i).getName())){
+              compteur ++;
+            }
+          }
+          String box = bxtList.get(j).getName() + " " + compteur;
+          writer.println(box);
+        }
+
+        writer.println("");
+        List<Command> commandList = Command.find.where().ilike("INSTANCE_ID", instance_id ).findList();
+        for (Integer k=0; k < commandList.size(); k++) {
+          String command = commandList.get(k).getName() + " " + commandList.get(k).getRealTdate();
+          writer.println(command);
+        }
+
+        writer.println("");
+        for (Integer l=0; l < commandList.size(); l++) {
+
+          List<Product> productList = Product.find.where().ilike("INSTANCE_ID", instance_id ).ilike("Command_id",  commandList.get(l).getId().toString()).findList();
+          for (Integer m=0; m < productList.size(); m++) {
+            //manque le numero de la box achetee 
+            String product = commandList.get(l).getName() + " " + productList.get(m).getName() + " " +
+              productList.get(m).getProductLineId().getName() + " " + productList.get(m).getStartProduction() + " " +
+              productList.get(m).getBoxId().getName() + " " ;
+            writer.println(product);
+          }
+
+        }
+
+        writer.close();
+
+      } catch(FileNotFoundException fnfe) {
+            System.out.println(fnfe.getMessage());
+        }
+        catch(IOException ioe){
+            //Handle exception here, most of the time you will just log it.
+            ioe.getMessage();
+          }
+      return ok(response);
     }
 
 
@@ -105,6 +169,7 @@ public class HomeController extends Controller {
                   productBox.setBoxTypeId(boxMaxSize.getId().toString());
                   productBox.setCommandId(command.getId().toString());
                   productBox.setInstanceId(instance);
+                  productBox.setName(boxMaxSize.getName());
                   productBox.save();
 
                   // On doit déclarer une nouvelle pile dans laquelle on assure la
@@ -157,6 +222,7 @@ public class HomeController extends Controller {
                       productBox.setBoxTypeId(boxMaxSize.getId().toString());
                       productBox.setCommandId(command.getId().toString());
                       productBox.setInstanceId(instance);
+                      productBox.setName(boxMaxSize.getName());
                       productBox.save();
 
                       // On doit déclarer une nouvelle pile dans laquelle on assure la
