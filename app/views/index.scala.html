@@ -38,26 +38,29 @@
                     <div class="panel panel-success">
                         <div class="panel-heading">Générer la solution pour une instance</div>
                         <div class="panel-body">
-                            <form action="@routes.HomeController.script()" enctype="multipart/form-data" method="post">
-                                <div class="dropdown">
-                                    <div class="form-group">
-                                        <label for="sel1">Sélectionner l'instance:</label>
-                                        <select class="form-control" id="instances-list">
+                            <div class="dropdown">
+                                <div class="form-group">
+                                    <label for="sel1">Sélectionner l'instance:</label>
+                                    <select class="form-control" id="instances-list-see" name="instance-id-see">
+                                        <option value="">Choisir l'instance...</option>
                                         @for(instance <- instances) {
-                                            <option class="instance" id="@instance.getId">
+                                            <option class="instance" id="@instance.getId" value="@routes.HomeController.treatment(instance.getId().toString)">
                                             @instance.getName()
                                             </option>
                                         }
-                                        </select>
-                                    </div>
+                                    </select>
                                 </div>
-                                <div class="btn-group" role="group">
-                                    <input type="submit" name="action" value="generate-sol" class="btn btn-info">
-                                </div>
-                            </form>
+                            </div>
+                            <div class="btn-group" role="group">
+                                <a class="btn btn-info" href="#" id="solBtn">Visualiser la solution</a>
+                            </div>
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
                 <div class="col-md-6">
                     <div class="panel panel-warning">
                         <div class="panel-heading">Visualiser la solution pour une instance</div>
@@ -74,9 +77,9 @@
                                         }
                                     </select>
                                 </div>
-                            </div>
-                            <div class="btn-group" role="group">
-                                <a class="btn btn-info" href="#" id="editBtn">Télécharger la solution</a>
+                                <div class="btn-group" role="group">
+                                    <a class="btn btn-info" href="#" id="editBtn">Télécharger la solution</a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -88,5 +91,9 @@
     <script>
     $(document).on('change', '#instances-list', function () {
         $('#editBtn').attr('href', $(this).val());
+    });
+
+    $(document).on('change', '#instances-list-see', function () {
+        $('#solBtn').attr('href', $(this).val());
     });
     </script>

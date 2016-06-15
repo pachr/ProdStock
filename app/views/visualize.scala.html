@@ -1,0 +1,64 @@
+@(instance: Instance, commande: Command, boxes: List[Box], products: List[Product], piles: List[Pile])
+@import java.lang; var cumulWidth : Integer = 0; var cumulHeight : Integer = 0; var cumulWidthProduct : Integer = 0;
+@*
+* Call the `main` template with two arguments. The first
+* argument is a `String` with the title of the page, the second
+* argument is an `Html` object containing the body of the page.
+*@
+@main("ProdStock") {
+    @*
+    * Get an `Html` object by calling the built-in Play welcome
+    * template and passing a `String` message.
+    *@
+    <div class="page-header">
+        <h1>@instance.getName()
+            <small>Commande <strong>@commande.getName()</strong>
+                prévue à <strong>@commande.getSendingTdate()</strong> Envoyée à <strong>@commande.getRealTdate()</strong>
+            </small>
+        </h1>
+    </div>
+    @for(box <- boxes) {
+        @(cumulHeight=0)
+        @(cumulWidth=0)
+        <div class="row">
+            <div class="col-md-12">
+                <div class="well">
+                    <div class="col-md-12">
+                        @box.getId() - @box.getBoxTypeName() - @box.getBoxTypeHeight() - @box.getBoxTypeWidth()
+                    </div>
+                    <svg width="@box.getBoxTypeWidth" height="@box.getBoxTypeHeight">
+                        <rect width="@box.getBoxTypeWidth" height="@box.getBoxTypeHeight" style="fill: rgb(128, 128, 128);
+                            stroke-width: 2;
+                            stroke: rgb(0, 0, 0)"></rect>
+                            @for(pile <- piles) {
+                                @(cumulHeight = 0)
+                                @if(pile.getBoxId().getId() == box.getId()) {
+                                    <rect x="@(cumulWidth)" y="@(box.getBoxTypeHeight - pile.getHeight)" height="@pile.getHeight" width="@pile.getWidth" style="fill: rgb(128, 0, 128);
+                                        stroke-width: 1;
+                                        stroke: rgb(0, 0, 0)">
+                                    </rect>
+                                    @if( pile.getNbProduct > 1){
+                                        @for(p <- 1 to pile.getNbProduct){
+                                            <rect x="@cumulWidth" y="@((box.getBoxTypeHeight - pile.getHeight + pile.getProductTypeHeight) - cumulHeight )" height="@(pile.getProductTypeHeight())" width="@(pile.getProductTypeWidth())" style="fill: rgb(128, 50, 50);
+                                                stroke-width: 1;
+                                                stroke: rgb(0, 0, 0)">
+                                        </rect>
+                                            @(cumulHeight += pile.getProductTypeHeight)
+                                        }
+                                    }
+                                    @if( pile.getNbProduct == 1){
+                                            <rect x="@cumulWidth" y="@(box.getBoxTypeHeight - pile.getHeight )" height="@(pile.getProductTypeHeight())" width="@(pile.getProductTypeWidth())" style="fill: rgb(128, 50, 50);
+                                                stroke-width: 1;
+                                                stroke: rgb(0, 0, 0)">
+                                        </rect>
+                                    }
+                                    @(cumulWidth += pile.getWidth)
+                                }
+                            }
+                    </svg>
+                </div>
+            </div>
+
+        </div>
+    }
+}

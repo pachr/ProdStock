@@ -208,4 +208,16 @@ public class Box extends Model{
 	public static void setCurrentWidth(Integer currentWidth) {
 		Box.currentWidth = currentWidth;
 	}
+
+	public Integer getBoxTypeWidth(){
+		return BoxType.find.byId(this.getBoxTypeId()).getWidth();
+	}
+
+	public Integer getBoxTypeHeight(){
+		return BoxType.find.byId(this.getBoxTypeId()).getHeight();
+	}
+
+	public String getBoxTypeName(){
+		return BoxType.find.byId(this.getBoxTypeId()).getName() + "_" + getBoxNumber();
+	}
 }

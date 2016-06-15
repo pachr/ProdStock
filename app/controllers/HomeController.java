@@ -1,5 +1,6 @@
 package controllers;
 
+import controllers.*;
 import models.*;
 import play.mvc.*;
 
@@ -37,7 +38,14 @@ public class HomeController extends Controller {
     public Result visualisation(String instance_id) {
         //String instance_id = "1";
         Instance instance = Instance.find.byId(instance_id);
+
         String response = "Creation success";
+        //Si l'instance est nulle on reexecute le script
+        if (instance == null) {
+            treatment(instance_id);
+            visualisation(instance_id);
+        }
+
 
         String name = instance.getName();
 
@@ -95,13 +103,9 @@ public class HomeController extends Controller {
     }
 
 
-    public Result script() {
-        // ***********  Algorithme de gestion de la production ***************
-
-        // On récupère le numéro d'instance passé en paramètre
-        String instance_id = "1";
-
-
+    public Result treatment(String instance_id){
+        // Instance uploadé que l'on reçcoit en paramètre.
+        //String instance_id = instanceId;
 
 
         // On get l'objet instance à partir de son id
@@ -109,7 +113,7 @@ public class HomeController extends Controller {
 
         // On regarde si il y a déjà une solution pour l'instance
         if(Solution.find.where().ilike("Instance_id", instance_id).findList().size() > 0){
-          return redirect(controllers.routes.StatsController.stats());
+          return redirect(controllers.routes.StatsController.stats(instance_id));
         }
 
         // On récupère dans des variables que l'on utilisera tout au long de l'algorithe : la liste des types de prodiots, la liste des lignes de production, les type de box
@@ -313,9 +317,14 @@ public class HomeController extends Controller {
                               // On retourve la box pour pouvoir l'enregistrer derrière
                               productBox = Box.find.byId(listPile.get(n).getBoxId().getId().toString());
 
-                              endStatementFlag = true;
+                                // On set le bon nombre de produits sur la pile
+                                listPile.get(n).setNbProduct(listPile.get(n).getNbProduct() + 1);
+
+                                listPile.get(n).save();
+                                endStatementFlag = true;
 
                               Logger.debug("On a trouvé une pile de la meme commande, product type de taille" + listPile.get(n).toString());
+                                Logger.debug("nb produit dans la pile" + listPile.get(n).getNbProduct().toString());
                             }
                           }
                         }
@@ -518,7 +527,9 @@ public class HomeController extends Controller {
         sol.setInstanceId(instance);
         sol.save();
 
-        return redirect(controllers.routes.StatsController.stats());
+
+        return redirect(controllers.routes.StatsController.stats(instance_id));
+
     }
 
 
@@ -646,7 +657,7 @@ public class HomeController extends Controller {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            return ok(compteur.toString());
+            return redirect(controllers.routes.HomeController.index());
         } else {
             flash("error", "Missing file");
             return badRequest();

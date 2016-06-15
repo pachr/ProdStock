@@ -1,6 +1,6 @@
 package controllers;
 
-import models.Instance;
+import models.*;
 import play.mvc.*;
 
 import views.html.*;
@@ -13,20 +13,21 @@ import play.Logger;
 
 import models.*;
 
-import java.util.HashMap;
 
 public class StatsController extends Controller {
 
-    public Result stats() {
+    public Result stats(String instanceId) {
         //double eval = calcEval();
-        Instance inst = Instance.find.byId("1");
+        Instance inst = Instance.find.byId(instanceId);
         List<BoxType> bxTypes = BoxType.find.where().eq("INSTANCE_ID", inst.getId()).findList();
         List<Command> commandes = Command.find.where().eq("instance_id", inst.getId()).findList();
-        Float eval = Solution.find.where().eq("instance_id", inst.getId()).findList().get(0).getEvalScore();
+        List<Solution> solutions = Solution.find.where().ilike("instance_id", instanceId).findList();
+        Float eval = solutions.get(0).getEvalScore();
         List<ProductLine> plList = ProductLine.find.where().eq("instance_id", inst.getId()).findList();
         List<Box> boxList = Box.find.where().eq("instance_id", inst.getId()).findList();
         Logger.debug(Integer.toString(boxList.get(1).getId()));
         return ok(views.html.stats.render(eval, inst, bxTypes, commandes, plList, boxList));
+
     }
 
     // public HashMap<String, HashMap<String, HashMap<String, String>>> lineGant(Instance inst) {
@@ -69,27 +70,13 @@ public class StatsController extends Controller {
     //
     // }
 
-    ///////////////////////////////////////////////////////////////////////////////////////////
-    //Calcul de l'eval de la solution (formule du Sujet) cf Modele fichier solution sur drive//
-    ///////////////////////////////////////////////////////////////////////////////////////////
-    public Float calcEval(List<BoxType> bxTypes, List<Command> commandes) {
-        Float eval = new Float(0);
-        for (BoxType box_type : bxTypes) {
-            eval = eval + box_type.calculateCout();
-        }
-        for (Command commande : commandes) {
-            eval = eval + commande.calculateFee();
-        }
-        return eval;
+    public Result visualize(String instanceId, String commandId){
+        Instance inst = Instance.find.byId(instanceId);
+        Command cmd = Command.find.byId(commandId);
+        List<Box> boxes = Box.find.where().ilike("command_id", commandId).findList();
+        List<Product> products = Product.find.where().ilike("command_id", commandId).findList();
+        List<Pile> piles = Pile.find.where().ilike("box_command_id", commandId).findList();
+        return ok(views.html.visualize.render(inst, cmd, boxes, products, piles));
     }
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-    //Faire une fonction pour get tout les fields d'une solution. (cf Modele fichier solution sur //
-    //drive pour les fields a retrieve). On lui passera comme parametre juste instance id         //
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-
-    public Solution getFieldSol(String instance_id) {
-        Solution solution = (Solution) Solution.find.where().ilike("instance_id", instance_id);
-        return solution;
-    }
 }

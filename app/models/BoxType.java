@@ -1,6 +1,7 @@
 package models;
 
 
+import com.avaje.ebean.Expr;
 import com.avaje.ebean.Model;
 
 import javax.persistence.*;
@@ -134,7 +135,7 @@ public class BoxType extends Model{
 	}
 
 	public long countAchetes(){
-		return Box.find.where().gt("INSTANCE_ID", getInstanceId().getId()).gt("BOX_TYPE_ID", getId()).findRowCount();
+		return Box.find.where().and(Expr.eq("INSTANCE_ID", getInstanceId().getId()), Expr.eq("BOX_TYPE_ID", getId())).findRowCount();
 	}
 
 	public Float calculateCout(){
