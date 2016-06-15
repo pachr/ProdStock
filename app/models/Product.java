@@ -97,6 +97,10 @@ public class Product extends Model {
 		return startProduction;
 	}
 
+  public Integer getProductionTime() {
+    return this.getProductTypeId().getProductionTime();
+  }
+
 	/**
 	* Sets new value of startProduction
 	* @param
