@@ -9,6 +9,7 @@ import java.nio.charset.Charset;
 import java.io.*;
 import java.util.Arrays;
 import java.util.List;
+import play.Logger;
 
 import models.*;
 
@@ -24,7 +25,7 @@ public class StatsController extends Controller {
         Float eval = Solution.find.where().eq("instance_id", inst.getId()).findList().get(0).getEvalScore();
         List<ProductLine> plList = ProductLine.find.where().eq("instance_id", inst.getId()).findList();
         List<Box> boxList = Box.find.where().eq("instance_id", inst.getId()).findList();
-
+        Logger.debug(Integer.toString(boxList.get(1).getId()));
         return ok(views.html.stats.render(eval, inst, bxTypes, commandes, plList, boxList));
     }
 

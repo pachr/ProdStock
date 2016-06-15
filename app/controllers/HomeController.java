@@ -54,7 +54,7 @@ public class HomeController extends Controller {
             for (Integer j = 0; j < bxtList.size(); j++) {
                 Integer compteur = 0;
                 for (Integer i = 0; i < boxList.size(); i++) {
-                    if (bxtList.get(j).getName().equals(boxList.get(i).getName())) {
+                  if (bxtList.get(j).getId().toString().equals(boxList.get(i).getBoxTypeId())) {
                         compteur++;
                     }
                 }

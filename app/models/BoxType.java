@@ -141,5 +141,5 @@ public class BoxType extends Model{
 		return countAchetes()*getPrice();
 	}
 
-	
+
 }
