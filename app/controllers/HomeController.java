@@ -301,8 +301,7 @@ public class HomeController extends Controller {
                     pile.save();
                   }
                   else{
-                    // On trouvé des box liés à la commande. Nous allons donc tester si il y en a des disponibles avec la meme commande
-                    // On
+                    // On a trouvé des box liés a ma commande on va regarder si on peut trouver un box avec lameme commande, type de produit, taillle de la pile et stock mini de produit
                     Boolean endStatementFlag = false;
                     List<Pile> listPile  = Pile.find.where().ilike("BOX_COMMAND_ID", currentCommand.getId().toString()).findList();
 
