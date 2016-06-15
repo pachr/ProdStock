@@ -22,19 +22,165 @@ public class Pile extends Model{
     private Integer id;
     @Column(name = "WIDTH")
     private Integer width;
+    @Column(name = "HEIGHT")
+    private Integer height;
     @Column(name = "HEIGHT_MAX")
     private Integer heightMax;
     @JoinColumn(name = "BOX_ID", referencedColumnName = "ID")
-    @OneToOne
+    @ManyToOne
     private Box boxId;
     @JoinColumn(name = "BOX_COMMAND_ID", referencedColumnName = "ID")
-    @OneToOne
+    @ManyToOne
     private Command commandPileId;
     @JoinColumn(name = "PRODUCT_TYPE_ID", referencedColumnName = "ID")
-    @OneToOne
+    @ManyToOne
     private ProductType productTypeId;
 
     public static Finder<String, Pile> find = new Finder<String,Pile>(Pile.class);
 
 
-  }
+
+
+
+
+
+	/**
+	* Returns value of id
+	* @return
+	*/
+	public Integer getId() {
+		return id;
+	}
+
+	/**
+	* Sets new value of id
+	* @param
+	*/
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	/**
+	* Returns value of width
+	* @return
+	*/
+	public Integer getWidth() {
+		return width;
+	}
+
+	/**
+	* Sets new value of width
+	* @param
+	*/
+	public void setWidth(Integer width) {
+		this.width = width;
+	}
+
+	/**
+	* Returns value of height
+	* @return
+	*/
+	public Integer getHeight() {
+		return height;
+	}
+
+	/**
+	* Sets new value of height
+	* @param
+	*/
+	public void setHeight(Integer height) {
+		this.height = height;
+	}
+
+	/**
+	* Returns value of heightMax
+	* @return
+	*/
+	public Integer getHeightMax() {
+		return heightMax;
+	}
+
+	/**
+	* Sets new value of heightMax
+	* @param
+	*/
+	public void setHeightMax(Integer heightMax) {
+		this.heightMax = heightMax;
+	}
+
+	/**
+	* Returns value of boxId
+	* @return
+	*/
+	public Box getBoxId() {
+		return boxId;
+	}
+
+	/**
+	* Sets new value of boxId
+	* @param
+	*/
+	public void setBoxId(Box boxId) {
+		this.boxId = boxId;
+	}
+
+	/**
+	* Returns value of commandPileId
+	* @return
+	*/
+	public Command getCommandPileId() {
+		return commandPileId;
+	}
+
+	/**
+	* Sets new value of commandPileId
+	* @param
+	*/
+	public void setCommandPileId(Command commandPileId) {
+		this.commandPileId = commandPileId;
+	}
+
+	/**
+	* Returns value of productTypeId
+	* @return
+	*/
+	public ProductType getProductTypeId() {
+		return productTypeId;
+	}
+
+	/**
+	* Sets new value of productTypeId
+	* @param
+	*/
+	public void setProductTypeId(ProductType productTypeId) {
+		this.productTypeId = productTypeId;
+	}
+
+
+  public Boolean isPileOversized(Integer productHeight){
+
+		// On teste si après l'ajout du produit on va dépasser ou non la taille de la pile
+		// On renvoie 0 si on dépasse la taille max avec le nouveau produit. 1 si on ne dépasse pas
+		if(this.height + productHeight > this.heightMax){
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+
+	public boolean checkProductTypeId(Integer productTypeId){
+		if(this.productTypeId.getId() == productTypeId){
+			return true;
+		}
+		else{return false;}
+
+	}
+
+  public void updateHeight(Integer productHeight){
+		this.height = this.height + productHeight;
+	}
+
+
+
+}

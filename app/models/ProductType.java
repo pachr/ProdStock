@@ -36,7 +36,7 @@ public class ProductType extends Model{
     private Instance instanceId;
     @OneToMany(mappedBy = "productTypeId")
     private List<Product> produitCollection;
-    @OneToOne(mappedBy="productTypeId")
+    @OneToMany(mappedBy="productTypeId")
     private Pile pile;
 
     public static Finder<String, ProductType> find = new Finder<String, ProductType>(ProductType.class);
