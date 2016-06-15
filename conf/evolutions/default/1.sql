@@ -45,6 +45,8 @@ create table pile (
   ID                        integer(55) auto_increment not null,
   WIDTH                     integer,
   HEIGHT                    integer,
+  MAX_EMPIL                 integer,
+  NB_PRODUCT                integer,
   HEIGHT_MAX                integer,
   BOX_ID                    integer(55),
   BOX_COMMAND_ID            integer(55),
